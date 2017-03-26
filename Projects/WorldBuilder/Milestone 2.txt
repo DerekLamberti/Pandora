@@ -1,0 +1,11 @@
+Pandora Milestone 2 design doc
+===============================
+
+In M2 the focus will be adding and manipulating multiple objects in the world. This involves having a scene heirarchy and view, enabling selection of objects from the heirarchy GUI or from the viewport. Selected objects can be translated, rotated or scaled from the viewport using a Trasnformation widget. 
+In addition to now supporting multiple assets in a single session, we will be adding support for all the standard light types (Point light, Spotlight and Directional light). Lights should also appear in the heirarchy view as well as having an icon in the viewport used for viewport selection. 
+We will also add support for a FirstPerson camera mode controllable via WASD controls. Other fixed cameras can be added to the scene and should appear in the scene heirarchy.
+When objects are selected, we will populate a properties panel. This will include setting such as Position, Rotation and scale as well as type specific properties. For example, a Spotlight would have a FOV property which other light types would not have.
+Alternative render modes will be selectable within the GUI. These will include debug visualisations such as unlit mode, normals, UVs, etc. We will also begin to design the render infrastucture a bit more in order to answer the following questions:
+1) How should shaders work?
+2) What is an appropriate abstration to support alternative APIs such as Vulkan?
+3) What is an appropriate interface to enable alternative renderers? Ie Deferred, Forward+, RayTrace, other???, etc
