@@ -1,0 +1,29 @@
+Milestone 1 design doc
+=========================
+
+The M1 target is intended to get a broad base framework in place. These are some essential libraries, workflows and functionalities that are required for subsequent milestones and features to be developed by multiple contributers. This will also be a test of the chosen toolset and services to ensure group collaboration effectiveness. Milesone 2 (M2) will follow M1 and will likely be a slight extension of M1 work. Only by M3 will we have enough foundation to start the more interesting work.
+
+The first goal is to have an x64 WorldBuilder application that builds and runs with at least 2 configurations (Release and Debug). The D3D11 samples could be used as a quick shortcut to getting started but this code will likely evolve into something significantly different. 
+
+A GUI framework will be required for WorldBuilder. IMGUI is a free, portble and lightweight library that could fill this requirement. Although I have never worked with it before, it seems like a capable library.
+
+A unit test framework (like Unit++) will be require to enure we don't introduce regresions. This will be paricularly useful for libraries like the the Math lib described next. The unit tests will be colocated with the library that they test and will need to be executed explicitly to test for regressions. At a later state we might set up some continuous integration mechanism but this is not required for M1.
+
+A 3D math library will be required for performaing model and camera transformations. For M1 we need a basic Reference implementation of a 3D math library which defines Vectors and Matrices as well as basic operations. This will get optimised post M2. This library will be expected to have full test coverage using the Unit testing framework.
+
+The WorldBuilder application will need to be able to import and manipulate 3D assets. ASSIMP is another free and widely supported library which supports a range of formats. This will be used for handling the import via a command line initially. Once the GUI framework is in place we can add an import option to the menu. Once the console framework is in place, we can optionally add a command to import assets. This work will require there to be a basic renderer in place.
+
+The WorldBuilder will need to be able to render an imported asset. Initially, this will just need to render the triangles in a single solid colour in front of a fixed camera. Niether the camera nor the model will be movable.
+Once the rendering is in place, we can add support for diffuse/albedo textures. This requires hooking up UVs and ensuring that the texture loading is working correctly. Initially we will only require support for a single UV stream.
+
+Using a single hard coded light direction and colour, add per-vertex phong shading support to the rendering. 
+
+A procedural mesh generation library will be required. This library will be used to create UI widgets for us in the viewport. For example, The translate, rotation and scale widgets will be made up of these procedural meshes. Initially, we need support for Box, Sphere, Plane, Disc, cylinder and cone shapes. The tesselation of these shapes should be controllable via inputs during creation.
+
+A model-view camera model needs to be added. This initial camera model will allow keep the asset within view and allow for arc-ball type rotation.
+
+Various features which will be developed in the future will require ray-tracing. We will need a library for testing rays against the loaded assets. An initial implementation can test mouse clicks for selecting/deselecting the loaded asset. The asset will display with an outline, indicating that it is selected.
+
+The WorldBuilder application will need a comprehensive logging and console functionality. The implemenatation should make it trivial to create new commands to execute functions as well as setting variable states. This will be exposed in the application via Console window using the IMGUI framework.
+
+As the codebase grows, we will likely want to introduce some code review process to ensure the quality is kept up to a certain standard. As part of this we may want to add some CI process. We need to spend some time investigating what options are available to us, but also what is practical to keep dev interesting and productive. I don't want us to become bogged down in needless process.
