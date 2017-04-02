@@ -1,3 +1,6 @@
 Libraries/Base/Build/
 Libraries/Base/.vs/
 Libraries/Base/TestBase/Build/
+Libraries/Math/TestMath/Build/
+Libraries/Math/Build/
+Libraries/Math/.vs/
