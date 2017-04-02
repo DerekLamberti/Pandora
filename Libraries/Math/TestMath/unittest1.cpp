@@ -3,21 +3,22 @@
 #include "../Math.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace Pandora;
-using namespace Pandora::Math;
 
 namespace Microsoft {
 	namespace VisualStudio {
 		namespace CppUnitTestFramework
 		{
-			template <> static std::wstring ToString(const Vec3f& t) { RETURN_WIDE_STRING(t); }
+			template <> static std::wstring ToString(const Pandora::Math::Vec3f& t) { RETURN_WIDE_STRING(t); }
 		}
 	}
 }
 
 namespace TestMath
 {		
-	TEST_CLASS(UnitTest1)
+	using namespace Pandora;
+	using namespace Pandora::Math;
+
+	TEST_CLASS(Vector3Types)
 	{
 	public:
 		

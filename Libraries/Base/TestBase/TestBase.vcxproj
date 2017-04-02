@@ -78,23 +78,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)</OutDir>
-    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)</IntDir>
+    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)</OutDir>
-    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)</IntDir>
+    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)</OutDir>
-    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)</IntDir>
+    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)</OutDir>
-    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)</IntDir>
+    <OutDir>$(ProjectDir)\Build\Output\$(Configuration)_$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)\Build\Intermediate\$(Configuration)_$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
