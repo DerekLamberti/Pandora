@@ -19,7 +19,7 @@ namespace Microsoft {
 namespace UnitTests
 {		
 	using namespace Pandora;
-	TEST_CLASS(UnitTest1)
+	TEST_CLASS(BaseTypes)
 	{
 	public:
 		
