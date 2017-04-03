@@ -53,7 +53,7 @@ namespace Pandora
 			return !operator==(a, b);
 		}
 
-		// Mutlitply a Vector by a scaler
+		// Mutlitply a Vector by a scalar
 		template<typename T>
 		Vector3<T> Mul(const Vector3<T>& vec, float32 scale)
 		{
