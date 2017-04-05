@@ -1,6 +1,22 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
+#include <exception>
+
 #include "../BaseTypes.h"
+
+// The following 2 defines need to be set before NumericCast.h is included.
+// These turn on numeric_cast validaion and enable the exceptions.
+// The exceptions are what the Native Unit Test framework will test against.
+
+// Enable numeric_cast validation. 
+#define VALIDATE_NUMERIC_CAST
+
+// Cause numeric_cast failures to throw an exception rather than assert.
+#define VALIDATE_NUMERIC_CAST_WITH_EXCEPTIONS
+
+// Now include the numeric_cast header
+#include "../NumericCast.h"
+
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -88,5 +104,48 @@ namespace UnitTests
 			Assert::AreEqual(0.75_h, half_cast<float16>(0.5_h + 0.25_h), L"Test float16 addition.");
 		}
 
+		TEST_METHOD(NumericCastTo8bit)
+		{
+
+			// Bad int8 casts
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<int8>(130);
+			});
+
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<int8>(-200);
+			});
+
+			// Bad uint8 casts
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<uint8>(-30);
+			});
+
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<uint8>(300);
+			});
+		}
+
+		TEST_METHOD(NumericCastTo16bit)
+		{
+
+			// Bad int16 casts
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<int16>(35539);
+			});
+
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<int16>(-45539);
+			});
+
+			// Bad uint16 cast
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<uint16>(-35);
+			});
+
+			Assert::ExpectException<BadNumericCast>([&] {
+				numeric_cast<uint16>(65539);
+			});			
+		}
 	};
 }

@@ -21,6 +21,9 @@
     <ClInclude Include="BaseTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NumericCast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base.cpp">

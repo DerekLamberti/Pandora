@@ -2,3 +2,4 @@
 
 
 #include "BaseTypes.h"
+#include "NumericCast.h"
