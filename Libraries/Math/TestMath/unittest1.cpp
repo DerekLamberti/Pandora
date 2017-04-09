@@ -70,5 +70,32 @@ namespace TestMath
 
 			Assert::AreEqual(c, d, L"Test commutivity of Vector multiplication");
 		}
+
+		TEST_METHOD(VectorDotProduct)
+		{
+			Vec3f a = Make_Vector(1.0f, 2.0f, 3.0f);
+			Vec3f b = Make_Vector(4.0f, 6.0f, 8.0f);
+			float dpAB = Dot(a, b);
+
+			Assert::AreEqual(40.0f, dpAB, L"Test dot product between two vectors.");
+
+
+			float dpBA = Dot(b, a);
+			Assert::AreEqual(dpBA, dpAB, L"Test vector dot product commutative.");
+		}
+
+		TEST_METHOD(VectorCrossProduct)
+		{
+			Vec3f a = Make_Vector(1.0f, 2.0f, 3.0f);
+			Vec3f b = Make_Vector(4.0f, 6.0f, 8.0f);
+
+			Vec3f cpAB = Cross(a, b);
+			Vec3f expectedAB = Make_Vector(16.0f - 18.0f, 12.0f - 8.0f, 6.0f - 8.0f);
+			Assert::AreEqual(expectedAB, cpAB, L"Test cross product between two vector3.");
+
+			Vec3f cpBA = Cross(b, a);
+			Vec3f expectedBA = Make_Vector(18.0f - 16.0f, 8.0f - 12.0f, 8.0f - 6.0f);
+			Assert::AreEqual(expectedBA, cpBA, L"Test vector cross product commutative.");
+		}
 	};
 }

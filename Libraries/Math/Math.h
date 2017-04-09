@@ -54,17 +54,31 @@ namespace Pandora
 		}
 
 		// Mutlitply a Vector by a scalar
-		template<typename T>
-		Vector3<T> Mul(const Vector3<T>& vec, float32 scale)
+		template<typename T, typename S>
+		Vector3<T> Mul(const Vector3<T>& vec, S scale)
 		{
 			return Vector3<T>{ vec.X * scale, vec.Y * scale, vec.Z * scale };
 		}
 
-		// Multiply two vectors of the same type component wize
+		// Multiply two vectors of the same type componentwise
 		template<typename T>
 		Vector3<T> Mul(const Vector3<T>& a, const Vector3<T>& b)
 		{
 			return Vector3<T>{a.X * b.X, a.Y * b.Y, a.Z * b.Z};
+		}
+
+		// Multiple two vectors componentwise using operator *
+		template<typename T>
+		Vector3<T> operator*(const Vector3<T> &a, const Vector3<T> &b)
+		{
+			return Mul(a, b);
+		}
+
+		// Scale a vector using operator *
+		template<typename T, typename S>
+		Vector3<T> operator*(const Vector3<T> &a, S scale)
+		{
+			return Mul(a, scale);
 		}
 
 		// Add two vectors of the same type component wise
@@ -72,6 +86,30 @@ namespace Pandora
 		Vector3<T> Add(const Vector3<T>& vecA, const Vector3<T>& vecB)
 		{
 			return Vector3<T>{vecA.X + vecB.X, vecA.Y + vecB.Y, vecA.Z + vecB.Z};
+		}
+
+		// Add two vectors using the + operator
+		template<typename T>
+		Vector3<T> operator+(const Vector3<T> &a, const Vector3<T> &b)
+		{
+			return Add(a, b);
+		}
+
+		// Return the dot product of two vector3
+		template<typename T>
+		T Dot(const Vector3<T>& a, const Vector3<T>& b)
+		{
+			return a.X*b.X + a.Y*b.Y + a.Z*b.Z;
+		}
+
+		// Return the cross product of two vectors
+		template<typename T>
+		Vector3<T> Cross(const Vector3<T> &a, const Vector3<T> &b)
+		{
+			return Vector3<T>{	a.Y*b.Z - a.Z*b.Y,
+								a.Z*b.X - a.X*b.Z,
+								a.X*b.Y - a.Y*b.X
+			};
 		}
 	}
 }
