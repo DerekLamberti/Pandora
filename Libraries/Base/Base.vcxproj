@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClInclude Include="Base.h" />
     <ClInclude Include="BaseTypes.h" />
+    <ClInclude Include="half.h" />
     <ClInclude Include="NumericCast.h" />
   </ItemGroup>
   <ItemGroup>
