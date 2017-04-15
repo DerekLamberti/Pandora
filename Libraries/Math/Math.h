@@ -8,129 +8,132 @@ namespace Pandora
 
 		// Generic 3 component Vector class.
 		template<typename T>
-		struct Vector3
-		{
-		public:
-			Vector3(T x, T y, T z) : X(x), Y(y), Z(z) {}
+		struct Vector3;
 
-			T X;
-			T Y;
-			T Z;
-		};
+		// Generic 4 component Vector class.
+		template<typename T>
+		struct Vector4;
+
 
 		// Define some common Vector3 types.
-		typedef Vector3<float64>	Vec3d;
-		typedef Vector3<float32>	Vec3f;
-		typedef Vector3<float16>	Vec3h;
-		typedef Vector3<int32>		Vec3i;
+		using Vec3d = Vector3<float64>;
+		using Vec3f = Vector3<float32>;
+		using Vec3h = Vector3<float16>;
+		using Vec3i = Vector3<int32>;
 
-		// Create a Vector3 of a particular type.
+		// Define some common Vector4 types.
+		using Vec4d = Vector4<float64>;
+		using Vec4f = Vector4<float32>;
+		using Vec4h = Vector4<float16>;
+		using Vec4i = Vector4<int32>;
+
+		
+		// Create a Vector of a particular type
 		template<typename T>
-		Vector3<T> Make_Vector(T x, T y, T z)
-		{
-			return Vector3<T>{ x,y,z };
-		}
+		Vector3<T> Make_Vector(T x, T y, T z);
 
-		// Stream operator
+		template<typename T>
+		Vector4<T> Make_Vector(T x, T y, T z, T w);
+
+		template<typename T>
+		Vector4<T> Make_Vector(const Vector3<T> &i, T w);
+
+		
+		// Stream Vector operator 
 		template<typename T, typename StreamType>
-		StreamType& operator<<(StreamType& stream, const Vector3<T> &obj)
-		{
-			stream << obj.X << obj.Y << obj.Z;
-			return stream;
-		}
+		StreamType& operator<<(StreamType& stream, const Vector3<T> &obj);
 
-		// Equality operator
+		template<typename T, typename StreamType>
+		StreamType& operator<<(StreamType& stream, const Vector4<T> &obj);
+
+		
+		// Equality operators
 		template<typename T>
-		bool operator==(const Vector3<T>& a, const Vector3<T>& b)
-		{
-			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-		}
+		bool operator==(const Vector3<T>& a, const Vector3<T>& b);
 
-		// Inequality operator
 		template<typename T>
-		bool operator!=(const Vector3<T>& a, const Vector3<T>& b)
-		{
-			return !operator==(a, b);
-		}
+		bool operator==(const Vector4<T>& a, const Vector4<T>& b);
 
+		
 		// Mutlitply a Vector by a scalar
 		template<typename T, typename S>
-		Vector3<T> Mul(const Vector3<T>& vec, S scale)
-		{
-			return Vector3<T>{ vec.X * scale, vec.Y * scale, vec.Z * scale };
-		}
+		Vector3<T> operator*(const Vector3<T>& vec, S s);
+
+		template<typename T, typename S>
+		Vector4<T> operator*(const Vector4<T>& vec, S s);
+
+
+		// Divide a vector by a scalar
+		template<typename T, typename S>
+		Vector3<T> operator/(const Vector3<T> &a, S s);
+
+		template<typename T, typename S>
+		Vector4<T> operator/(const Vector4<T> &a, S s);
+		
 
 		// Multiply two vectors of the same type componentwise
 		template<typename T>
-		Vector3<T> Mul(const Vector3<T>& a, const Vector3<T>& b)
-		{
-			return Vector3<T>{a.X * b.X, a.Y * b.Y, a.Z * b.Z};
-		}
+		Vector3<T> operator*(const Vector3<T> &a, const Vector3<T> &b);
 
-		// Multiple two vectors componentwise using operator *
 		template<typename T>
-		Vector3<T> operator*(const Vector3<T> &a, const Vector3<T> &b)
-		{
-			return Mul(a, b);
-		}
+		Vector4<T> operator*(const Vector4<T> &a, const Vector4<T> &b);
 
-		// Scale a vector using operator *
-		template<typename T, typename S>
-		Vector3<T> operator*(const Vector3<T> &a, S scale)
-		{
-			return Mul(a, scale);
-		}
 
-		// Add two vectors of the same type component wise
+		// Divide two vectors of the same type componentwise
 		template<typename T>
-		Vector3<T> Add(const Vector3<T>& vecA, const Vector3<T>& vecB)
-		{
-			return Vector3<T>{vecA.X + vecB.X, vecA.Y + vecB.Y, vecA.Z + vecB.Z};
-		}
+		Vector3<T> operator/(const Vector3<T> &a, const Vector3<T> &b);
 
-		// Add two vectors using the + operator
 		template<typename T>
-		Vector3<T> operator+(const Vector3<T> &a, const Vector3<T> &b)
-		{
-			return Add(a, b);
-		}
+		Vector4<T> operator/(const Vector4<T> &a, const Vector4<T> &b);
+
+
+		// Add two vectors using the + operator componentwise
+		template<typename T>
+		Vector3<T> operator+(const Vector3<T> &a, const Vector3<T> &b);
+
+		template<typename T>
+		Vector4<T> operator+(const Vector4<T> &a, const Vector4<T> &b);
+
+
+		// Subtract two vectors of the same type componentwise
+		template<typename T>
+		Vector3<T> operator-(const Vector3<T> &a, const Vector3<T> &b);
+
+		template<typename T>
+		Vector4<T> operator-(const Vector4<T> &a, const Vector4<T> &b);
+
 
 		// Return the dot product of two vector3
-		template<typename T>
-		T Dot(const Vector3<T>& a, const Vector3<T>& b)
-		{
-			return a.X*b.X + a.Y*b.Y + a.Z*b.Z;
-		}
+		template<typename T> 
+		T Dot(const Vector3<T>& a, const Vector3<T>& b);
+		
 
-		// Return the cross product of two vectors
+		// Return the cross product of two vector3
 		template<typename T>
-		Vector3<T> Cross(const Vector3<T> &a, const Vector3<T> &b)
-		{
-			return Vector3<T>{	a.Y*b.Z - a.Z*b.Y,
-								a.Z*b.X - a.X*b.Z,
-								a.X*b.Y - a.Y*b.X
-			};
-		}
+		Vector3<T> Cross(const Vector3<T> &a, const Vector3<T> &b);
 
-		// Return the square length of a vectore
-		template<typename T>
-		T Length2(const Vector3<T> &a)
-		{
-			return Dot(a, a);
-		}
 
-		// Return the length of a vector
+		// Return the square length of a vector3
 		template<typename T>
-		float Length(const Vector3<T> &a)
-		{
-			return sqrt(Length2(a));
-		}
+		T Length2(const Vector3<T> &a);
+
+
+		// Return the length of a vector3
+		template<typename T>
+		float Length(const Vector3<T> &a);
+
 
 		// Alias the length function to return magnitude
-		template<typename T> 
-		constexpr auto Magnitude(const T& a) ->decltype(Length(a))
-		{
-			return Length(a);
-		}
+		template<typename T>
+		constexpr auto Magnitude(const Vector3<T>& a) ->decltype(Length(a));
+
+
+		// Normaliza a vector3
+		template<typename T>
+		Vector3<T> Normalize(const Vector3<T>& a);
 	}
 }
+
+
+#include "Vector3.h"
+#include "Vector4.h"
