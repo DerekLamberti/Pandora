@@ -3,6 +3,7 @@
 #include <exception>
 
 #include "../BaseTypes.h"
+#include "../Memory.h"
 
 // The following 2 defines need to be set before NumericCast.h is included.
 // These turn on numeric_cast validaion and enable the exceptions.
@@ -38,8 +39,27 @@ namespace UnitTests
 	TEST_CLASS(BaseTypes)
 	{
 	public:
+
+		TEST_METHOD(SafeDelete)
+		{
+			int* nullInt = nullptr;
+			int* pX = new int;
+			Assert::AreNotEqual(nullInt, pX, L"Test alloaction ok.");
+
+			SAFE_DELETE(pX);
+			Assert::AreEqual(nullInt, pX, L"Test pointer is reset after safe deletion");
+
+
+			float* nullFloat = nullptr;
+			float* fArray = new float[200];
+			Assert::AreNotEqual(nullFloat, fArray, L"Test aray alloaction ok.");
+
+			SAFE_DELETE(fArray);
+			Assert::AreEqual(nullFloat, fArray, L"Test array pointer is reset after safe deletion");
+
+		}
 		
-		TEST_METHOD(TestBasicTypeSizes)
+		TEST_METHOD(BasicTypeSizes)
 		{
 			Assert::AreEqual(size_t{1}, sizeof(int8), L"Test int8 is 1 byte.");
 			Assert::AreEqual(size_t{1}, sizeof(uint8), L"Test uint8 is 1 byte.");
