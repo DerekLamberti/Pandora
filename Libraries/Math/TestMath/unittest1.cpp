@@ -33,7 +33,6 @@ namespace TestMath
 			Assert::AreEqual(4.4f, vec3f.X, L"Test vector constructs X correctly.");
 			Assert::AreEqual(5.5f, vec3f.Y, L"Test vector constructs Y correctly.");
 			Assert::AreEqual(6.6f, vec3f.Z, L"Test vector constructs Z correctly.");
-
 		}
 
 		TEST_METHOD(VectorScaling)
@@ -96,6 +95,20 @@ namespace TestMath
 			Vec3f cpBA = Cross(b, a);
 			Vec3f expectedBA = Make_Vector(18.0f - 16.0f, 8.0f - 12.0f, 8.0f - 6.0f);
 			Assert::AreEqual(expectedBA, cpBA, L"Test vector cross product commutative.");
+		}
+
+		TEST_METHOD(VectorLength)
+		{
+			Vec3f a = Make_Vector(3.0f, 0.0f, 0.0f);
+
+			float length2A = Length2(a);
+			Assert::AreEqual(9.0f, length2A, L"Test the vector length squared function.");
+
+			float length = Length(a);
+			Assert::AreEqual(3.0f, length, L"Test the vector length.");
+
+			float mag = Magnitude(a);
+			Assert::AreEqual(length, mag, L"Test the magnitude of a vector.");
 		}
 	};
 }

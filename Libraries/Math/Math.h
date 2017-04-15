@@ -32,8 +32,8 @@ namespace Pandora
 		}
 
 		// Stream operator
-		template<typename T, typename streamtype>
-		streamtype& operator<<(streamtype& stream, const Vector3<T> &obj)
+		template<typename T, typename StreamType>
+		StreamType& operator<<(StreamType& stream, const Vector3<T> &obj)
 		{
 			stream << obj.X << obj.Y << obj.Z;
 			return stream;
@@ -110,6 +110,27 @@ namespace Pandora
 								a.Z*b.X - a.X*b.Z,
 								a.X*b.Y - a.Y*b.X
 			};
+		}
+
+		// Return the square length of a vectore
+		template<typename T>
+		T Length2(const Vector3<T> &a)
+		{
+			return Dot(a, a);
+		}
+
+		// Return the length of a vector
+		template<typename T>
+		float Length(const Vector3<T> &a)
+		{
+			return sqrt(Length2(a));
+		}
+
+		// Alias the length function to return magnitude
+		template<typename T> 
+		constexpr auto Magnitude(const T& a) ->decltype(Length(a))
+		{
+			return Length(a);
 		}
 	}
 }
