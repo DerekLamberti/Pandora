@@ -136,12 +136,12 @@ void D3D11RenderBackend::SetViewport(int x, int y, int width, int height, float 
 {
 	// Setup the viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = width;
-	vp.Height = height;
+	vp.Width = (float)width;
+	vp.Height = (float)height;
 	vp.MinDepth = minDepth;
 	vp.MaxDepth = maxDepth;
-	vp.TopLeftX = x;
-	vp.TopLeftY = y;
+	vp.TopLeftX = (float)x;
+	vp.TopLeftY = (float)y;
 	m_DeviceContext->RSSetViewports(1, &vp);
 }
 
