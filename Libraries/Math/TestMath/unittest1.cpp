@@ -122,8 +122,43 @@ namespace TestMath
 			auto normal = Normalize(vec);
 			float nLen = Length(normal);
 
-			Assert::AreEqual(1.0f, nLen, 0.0001f, L"Test vector normalization");
+			Assert::AreEqual(1.0f, nLen, 0.0001f, L"Test vector normalization.");
 			
+		}
+
+		TEST_METHOD(Vector3Min)
+		{
+			auto a = Make_Vector(4, 5, 6);
+			auto b = Make_Vector(6, 5, 4);
+			auto c = Min(a, b);
+
+			Assert::AreEqual(4, c.x, L"Test min component x.");
+			Assert::AreEqual(5, c.y, L"Test min component y.");
+			Assert::AreEqual(4, c.z, L"Test min component z.");
+		}
+
+		TEST_METHOD(Vector3Max)
+		{
+			auto a = Make_Vector(4, 5, 6);
+			auto b = Make_Vector(6, 5, 4);
+			auto c = Max(a, b);
+
+			Assert::AreEqual(6, c.x, L"Test max component x.");
+			Assert::AreEqual(5, c.y, L"Test max component y.");
+			Assert::AreEqual(6, c.z, L"Test max component z.");
+		}
+
+		TEST_METHOD(Vector3Clamp)
+		{
+			auto a = Make_Vector(3, 5, 7);
+			auto b = Make_Vector(4, 4, 4);
+			auto c = Make_Vector(6, 6, 6);
+
+			auto d = Clamp(a, b, c);
+
+			Assert::AreEqual(4, d.x, L"Test clamped value x.");
+			Assert::AreEqual(5, d.y, L"Test clamped value y.");
+			Assert::AreEqual(6, d.z, L"Test clamped value z.");
 		}
 	};
 
@@ -177,6 +212,44 @@ namespace TestMath
 			Assert::AreEqual(44.0f, c.w, L"Test 2 vectors multiply W componentwise.");
 
 			Assert::AreEqual(c, d, L"Test commutivity of Vector multiplication");
+		}
+
+		TEST_METHOD(Vector4Min)
+		{
+			auto a = Make_Vector(4, 5, 6, 7);
+			auto b = Make_Vector(7, 6, 5, 4);
+			auto c = Min(a, b);
+
+			Assert::AreEqual(4, c.x, L"Test min component x.");
+			Assert::AreEqual(5, c.y, L"Test min component y.");
+			Assert::AreEqual(5, c.z, L"Test min component z.");
+			Assert::AreEqual(4, c.w, L"Test min component w.");
+		}
+
+		TEST_METHOD(Vector4Max)
+		{
+			auto a = Make_Vector(4, 5, 6, 7);
+			auto b = Make_Vector(7, 6, 5, 4);
+			auto c = Max(a, b);
+
+			Assert::AreEqual(7, c.x, L"Test max component x.");
+			Assert::AreEqual(6, c.y, L"Test max component y.");
+			Assert::AreEqual(6, c.z, L"Test max component z.");
+			Assert::AreEqual(7, c.w, L"Test max component w.");
+		}
+
+		TEST_METHOD(Vector4Clamp)
+		{
+			auto a = Make_Vector(3, 5, 7, 9);
+			auto b = Make_Vector(4, 4, 4, 4);
+			auto c = Make_Vector(6, 6, 6, 6);
+
+			auto d = Clamp(a, b, c);
+
+			Assert::AreEqual(4, d.x, L"Test clamped value x.");
+			Assert::AreEqual(5, d.y, L"Test clamped value y.");
+			Assert::AreEqual(6, d.z, L"Test clamped value z.");
+			Assert::AreEqual(6, d.z, L"Test clamped value w.");
 		}
 
 	};
