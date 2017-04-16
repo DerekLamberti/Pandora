@@ -176,5 +176,32 @@ namespace Pandora
 			return a / Length(a);
 		}
 
+		// Compute the componentwise minimum of two vector3
+		template<typename T>
+		Vector3<T> Min(const Vector3<T> &a, const Vector3<T> &b)
+		{
+			return Vector3<T>(
+				std::min(a.x, b.x),
+				std::min(a.y, b.y),
+				std::min(a.z, b.z));
+		}
+
+		// Compute the componentwise maximum of two vector4
+		template<typename T>
+		Vector3<T> Max(const Vector3<T> &a, const Vector3<T> &b)
+		{
+			return Vector3<T>(
+				std::max(a.x, b.x),
+				std::max(a.y, b.y),
+				std::max(a.z, b.z));
+		}
+
+		// Returns the compoenent wise clamped values between min and max.
+		template<typename T>
+		Vector3<T> Clamp(const Vector3<T> &value, const Vector3<T> &min, const Vector3<T> &max)
+		{
+			return Min(max, Max(min, value));
+		}
+
 	}
 }

@@ -131,6 +131,31 @@ namespace Pandora
 		// Normaliza a vector3
 		template<typename T>
 		Vector3<T> Normalize(const Vector3<T>& a);
+
+
+		// Compute the componentwise minimum of two vector3
+		template<typename T>
+		Vector3<T> Min(const Vector3<T> &a, const Vector3<T> &b);
+
+		template<typename T>
+		Vector4<T> Min(const Vector4<T> &a, const Vector4<T> &b);
+
+
+		// Compute the componentwise maximum of two vector4
+		template<typename T>
+		Vector3<T> Max(const Vector3<T> &a, const Vector3<T> &b);
+
+		template<typename T>
+		Vector4<T> Max(const Vector4<T> &a, const Vector4<T> &b);
+
+
+		// Returns the compoenent wise clamped values between min and max.
+		template<typename T>
+		Vector3<T> Clamp(const Vector3<T> &value, const Vector3<T> &min, const Vector3<T> &max);
+
+		template<typename T>
+		Vector4<T> Clamp(const Vector4<T> &value, const Vector4<T> &min, const Vector4<T> &max);
+
 	}
 }
 
