@@ -5,8 +5,9 @@
 
 #pragma once
 
-#include "targetver.h"
+#define NOMINMAX // Make sure this project never pulls in the windows min/mx macros.
 
+#include "targetver.h"
 #include <stdio.h>
 #include <tchar.h>
 
