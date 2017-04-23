@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <IMGUI_ROOT>$(ProjectDir)..\..\External\Imgui</IMGUI_ROOT>
+    <IMGUI_FONTS>$(IMGUI_ROOT)\Extra_fonts</IMGUI_FONTS>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <PostBuildEvent>
+      <Message>Copy fonts...</Message>
+      <Command>xcopy $(IMGUI_FONTS)\Roboto-Medium.ttf $(OutDir)\Fonts\ /Y /D</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="IMGUI_ROOT">
+      <Value>$(IMGUI_ROOT)</Value>
+    </BuildMacro>
+    <BuildMacro Include="IMGUI_FONTS">
+      <Value>$(IMGUI_FONTS)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
