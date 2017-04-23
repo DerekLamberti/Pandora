@@ -3,11 +3,15 @@
 
 #include "stdafx.h"
 
+#include "ImGuiWrapperD3D11.h"
+#include "InputTracker.h"
+
 #include <Base/Base.h> 
 #include <Base/Memory.h>
 
 #include <SDL.h>
 #include <d3d11.h>
+
 
 using namespace Pandora;
 
@@ -26,19 +30,42 @@ public:
 		, m_DefaultRenderTarget(nullptr)
 	{}
 
+	void CleanupResources();
+
+	bool CreateBackBuffer();
+	bool CreateRenderTargetView();
 	bool CreateDeviceAndSwapChain();
+
 	void SetViewport(int x, int y, int width, int height, float minDepth, float maxDepth);
 	void ClearBackbuffer(float colour[4]);
 	void PresentBackbuffer();
+	void ResizeBackbuffers(int width, int height);
+
+	ID3D11Device*			GetDevice() const { return m_Device; }
+	ID3D11DeviceContext*	GetDeviceContext() const { return m_DeviceContext; }
 
 
 private:
+
+
+private:
+
 	ID3D11Device*			m_Device;
 	ID3D11DeviceContext*	m_DeviceContext;
 	IDXGISwapChain*			m_SwapChain;
 	ID3D11Texture2D*		m_BackBuffer;
 	ID3D11RenderTargetView* m_DefaultRenderTarget;
 };
+
+void D3D11RenderBackend::CleanupResources()
+{
+	SAFE_RELEASE(m_DefaultRenderTarget);
+	SAFE_RELEASE(m_BackBuffer);
+	SAFE_RELEASE(m_SwapChain);
+	SAFE_RELEASE(m_DeviceContext);
+	SAFE_RELEASE(m_Device);
+
+}
 
 void D3D11RenderBackend::ClearBackbuffer(float colour[4])
 {
@@ -48,6 +75,38 @@ void D3D11RenderBackend::ClearBackbuffer(float colour[4])
 void D3D11RenderBackend::PresentBackbuffer()
 {
 	m_SwapChain->Present(0, 0);
+}
+
+bool D3D11RenderBackend::CreateBackBuffer()
+{
+	// Get a pointer to the back buffer
+	ID3D11Texture2D* pBackBuffer = nullptr;
+	HRESULT res = m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+	if (res != S_OK)
+	{
+		CleanupResources();
+		return false;
+	}
+	m_BackBuffer = pBackBuffer;
+	return true;
+}
+
+bool D3D11RenderBackend::CreateRenderTargetView()
+{
+	// Create the default render tagrget view
+	ID3D11RenderTargetView* pRtView = nullptr;
+	HRESULT res = m_Device->CreateRenderTargetView(m_BackBuffer, nullptr, &pRtView);
+	if (res != S_OK)
+	{
+		CleanupResources();
+		return false;
+	}
+	m_DefaultRenderTarget = pRtView;
+
+	// Set the new view as the render target
+	m_DeviceContext->OMSetRenderTargets(1, &m_DefaultRenderTarget, nullptr);
+
+	return true;
 }
 
 bool D3D11RenderBackend::CreateDeviceAndSwapChain()
@@ -71,10 +130,14 @@ bool D3D11RenderBackend::CreateDeviceAndSwapChain()
 	scDesc.SampleDesc.Quality = 0;
 	scDesc.Windowed = TRUE;
 
+	auto createDeviceFlags = 0;
+#ifdef _DEBUG
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 	HRESULT res = D3D11CreateDeviceAndSwapChain(nullptr,					// adapter. Use default.
 									D3D_DRIVER_TYPE_HARDWARE,	//
 									nullptr,					// Don't need the software module when using DRIVER_TYPE_HARDWARE
-									0,							// Flags
+									createDeviceFlags,			// Flags
 									featureLevels,				// Array of feature levels to try to initiate
 									1,							// 1 feature level in the array
 									D3D11_SDK_VERSION,			// SDK version
@@ -89,48 +152,30 @@ bool D3D11RenderBackend::CreateDeviceAndSwapChain()
 	if (res != S_OK)
 	{
 		// Something went wrong so free the resources
-		SAFE_RELEASE(pDevice);
-		SAFE_RELEASE(pDeviceContext);
-		SAFE_RELEASE(pSwapChain);
+		CleanupResources();
 		return false;
 	}
-
-	// Get a pointer to the back buffer
-	ID3D11Texture2D* pBackBuffer = nullptr;
-	res = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-	if (res != S_OK)
-	{
-		SAFE_RELEASE(pDevice);
-		SAFE_RELEASE(pDeviceContext);
-		SAFE_RELEASE(pSwapChain);
-		SAFE_RELEASE(pBackBuffer);
-		return false;
-	}
-
-	// Create the default render tagrget view
-	ID3D11RenderTargetView* pRtView = nullptr;
-	res = pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pRtView);
-	if (res != S_OK)
-	{
-		SAFE_RELEASE(pDevice);
-		SAFE_RELEASE(pDeviceContext);
-		SAFE_RELEASE(pSwapChain);
-		SAFE_RELEASE(pBackBuffer);
-		SAFE_RELEASE(pRtView);
-	}
-
-	// Set the new view as the render target
-	pDeviceContext->OMSetRenderTargets(1, &pRtView, nullptr);
-
-	// Set the member variables
 	m_Device = pDevice;
 	m_DeviceContext = pDeviceContext;
 	m_SwapChain = pSwapChain;
-	m_BackBuffer = pBackBuffer;
-	m_DefaultRenderTarget = pRtView;
+
+	// Create the back buffer
+	if (!CreateBackBuffer())
+	{
+		CleanupResources();
+		return false;
+	}
+
+	// Create the render target view
+	if (!CreateRenderTargetView())
+	{
+		CleanupResources();
+		return false;
+	}
 
 	return true;
 }
+
 
 void D3D11RenderBackend::SetViewport(int x, int y, int width, int height, float minDepth, float maxDepth)
 {
@@ -144,6 +189,25 @@ void D3D11RenderBackend::SetViewport(int x, int y, int width, int height, float 
 	vp.TopLeftY = (float)y;
 	m_DeviceContext->RSSetViewports(1, &vp);
 }
+
+void D3D11RenderBackend::ResizeBackbuffers(int width, int height)
+{
+	// Set the new view as the render target
+	m_DeviceContext->OMSetRenderTargets(0, 0, 0);
+	SAFE_RELEASE(m_DefaultRenderTarget);
+	SAFE_RELEASE(m_BackBuffer);
+	HRESULT res = m_SwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+	assert(res == S_OK);
+
+	if (!CreateBackBuffer() || !CreateRenderTargetView())
+	{
+		//TODO: log an error
+		return;
+	}
+
+	return;
+}
+
 
 class SDLApp
 {
@@ -159,7 +223,7 @@ public:
 		SDL_Quit();
 	}
 
-	int32 Initialise()
+	int32 Initialise(D3D11RenderBackend* renderBackend, ImGuiWrapperD3D11* gui)
 	{
 		// Initialise all of the SDL
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -169,23 +233,85 @@ public:
 		}
 
 		// Create the window
-		m_Window = SDL_CreateWindow("WorldBuilder v0.000000000001", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Width, Height, SDL_WINDOW_SHOWN);
+		auto createWindowFlags = 
+			SDL_WINDOW_RESIZABLE |
+			SDL_WINDOW_SHOWN;
+		m_Window = SDL_CreateWindow("WorldBuilder v0.000000000001", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Width, Height, createWindowFlags);
 		if (!m_Window)
 			return 1;
+
+		m_RenderBackend = renderBackend;
+		m_Gui = gui;
+
+		// Create the device and backends
+		if (!m_RenderBackend->CreateDeviceAndSwapChain())
+		{
+			SDL_LogError(0, "Error trying to initialise D3D11 render backend. Exiting...");
+			return 1;
+		}
+
+		// Initialise the gui
+		m_Gui->Init(m_RenderBackend->GetDevice(), m_RenderBackend->GetDeviceContext(), GetActiveWindow());
 
 		return 0; //OK
 	}
 
+
 	void HandleEvents()
 	{
+		auto windowId = SDL_GetWindowID(m_Window);
 		SDL_Event event;
 		SDL_PollEvent(&event);
 
-		// Handle the quitting event
-		if (event.type == SDL_QUIT)
+		m_Input.ResetMouseKeys();
+		m_Input.UpdateMousePos();
+
+		switch (event.type)
 		{
-			m_IsRunning = false;
+		case SDL_MOUSEBUTTONDOWN:
+			{
+				if (event.button.button == SDL_BUTTON_LEFT) m_Input.SetMouseKeyDown(InputTracker::MouseButton::Left);
+				if (event.button.button == SDL_BUTTON_RIGHT) m_Input.SetMouseKeyDown(InputTracker::MouseButton::Right);
+				if (event.button.button == SDL_BUTTON_MIDDLE) m_Input.SetMouseKeyDown(InputTracker::MouseButton::Middle);
+				return;
+			}
+		case  SDL_WINDOWEVENT:
+			{
+				if (event.window.windowID == windowId)
+				{
+					if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+					{
+						OnResize();
+					}
+				}
+				return;
+			}
+
+		// Handle the quitting event
+		case SDL_QUIT:
+			{
+				m_IsRunning = false;
+				return;
+			}
+
+		// Default case, do nothing
+		default:
+			break;
 		}
+	}
+
+	void OnResize()
+	{
+		int width;
+		int height;
+		SDL_GetWindowSize(m_Window, &width, &height);
+
+		// Update the gui
+
+
+		// Remake the backbuffer
+		m_RenderBackend->ResizeBackbuffers(width, height);
+		m_RenderBackend->SetViewport(0, 0, width, height, 0.0f, 1.0f);		
 	}
 	
 	void CleanUp()
@@ -198,10 +324,16 @@ public:
 
 	bool IsRunning() const { return m_IsRunning; }
 
-private:
-	SDL_Window*		m_Window;
+	const InputTracker& GetInput() const { return m_Input; }
 
-	bool			m_IsRunning;
+	SDL_Window* GetWindow() const { return m_Window; }
+
+private:
+	SDL_Window*				m_Window;
+	D3D11RenderBackend*		m_RenderBackend;
+	ImGuiWrapperD3D11*		m_Gui;
+	InputTracker			m_Input; // Little container to store input state
+	bool					m_IsRunning;
 };
 
 
@@ -210,17 +342,11 @@ int main(int argc, char *argv[])
 {
 	// Create an SDL app
 	SDLApp app; 
+	D3D11RenderBackend rbe;
+	ImGuiWrapperD3D11 gui;
 
 	// Initialise SDL, window, renderer, etc...
-	app.Initialise();
-
-	// Initialise the render backend.
-	D3D11RenderBackend rbe;
-	if (!rbe.CreateDeviceAndSwapChain())
-	{
-		SDL_LogError(0, "Error trying to initialise D3D11 render backend. Exiting...");
-		return 0;
-	}
+	app.Initialise(&rbe, &gui);
 
 	// Set the full viewport
 	rbe.SetViewport(0, 0, Width, Height, 0.0f, 1.0f);
@@ -228,7 +354,14 @@ int main(int argc, char *argv[])
 	// Begin the main loop
 	while (app.IsRunning())
 	{
+
 		app.HandleEvents();
+		int w = 0;
+		int h = 0;
+		SDL_GetWindowSize(app.GetWindow(), &w, &h);
+		gui.NewFrame(app.GetInput(), w, h);
+		
+		gui.MakeGui();
 
 		// Do the familiar blue fade to illustrate the render backend is working correctly
 		static float fade = 0.5f;
@@ -242,6 +375,7 @@ int main(int argc, char *argv[])
 		float colour1[] = { 0,0,fade,1 };
 		rbe.ClearBackbuffer(colour1);
 
+		gui.Render();
 		rbe.PresentBackbuffer();
 	}
 
