@@ -4,23 +4,22 @@
 
 namespace Pandora
 {
+	using int8 = int8_t;
+	using uint8 = uint8_t;
 
-	typedef char int8;
-	typedef unsigned char uint8;
+	using int16 = int16_t;
+	using uint16 = uint16_t;
 
-	typedef short int16;
-	typedef unsigned short uint16;
+	using int32 = int32_t;
+	using uint32 = uint32_t;
 
-	typedef int int32;
-	typedef unsigned int uint32;
-
-	typedef long long int64;
-	typedef unsigned long long uint64;
+	using int64 = int64_t;
+	using uint64 = uint64_t;
 
 	using namespace half_float::literal;
 	using half_float::half_cast;
-	typedef half_float::half float16;
+	using float16 = half_float::half;
 
-	typedef float float32;
-	typedef double float64;
+	using float32 = float;
+	using float64 = double;
 }
