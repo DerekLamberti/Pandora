@@ -1,5 +1,7 @@
 #pragma once
+#include <type_traits>
 
+#include "SwizzleHelper.h"
 
 namespace Pandora
 {
@@ -7,10 +9,29 @@ namespace Pandora
 	{
 		// Generic 3 component Vector class.
 		template<typename T>
-		struct Vector3
+		struct Vector3 : public SwizzleHelper<T>
 		{
 		public:
-			Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
+			using ValueType = T;
+
+			using typename SwizzleHelper<T>::UXY;
+			using typename SwizzleHelper<T>::UXZ;
+			using typename SwizzleHelper<T>::UYZ;
+			using typename SwizzleHelper<T>::UXYZ;
+			using typename SwizzleHelper<T>::SX;
+			using typename SwizzleHelper<T>::SY;
+			using typename SwizzleHelper<T>::SZ;
+
+			template<int N>
+			using Offset = typename SwizzleHelper<T>:: template Offset<N>;
+
+			Vector3(T ix, T iy, T iz) 
+				: x(ix), y(iy), z(iz) 
+			{}
+
+			Vector3(const Vector3& other)
+				: Vector3(other.x, other.y, other.z)
+			{}
 
 			template<typename S>
 			Vector3<T>& operator*=(S s)
@@ -42,7 +63,7 @@ namespace Pandora
 			{
 				x -= o.x;
 				y -= o.y;
-				z -= 0.z;
+				z -= o.z;
 				return (*this);
 			}
 
@@ -62,9 +83,28 @@ namespace Pandora
 				return (*this);
 			}
 
-			T x;
-			T y;
-			T z;
+		private:
+#include "DefineSwizzle2.inl"
+#include "DefineSwizzle2withZ.inl"
+#include "DefineSwizzle3.inl"
+			
+		public:
+
+			union {
+#include "DeclareSwizzle2.inl"
+#include "DeclareSwizzle2WithZ.inl"
+#include "DeclareSwizzle3.inl"
+
+				struct
+				{
+					T x;
+					T y;
+					T z;
+				};
+
+				T v[3];
+
+			};
 		};
 
 		// Create a Vector3 of a particular type
@@ -82,123 +122,168 @@ namespace Pandora
 			return stream;
 		}
 
-		// Equality operators
+
 		template<typename T>
-		bool operator==(const Vector3<T>& a, const Vector3<T>& b)
+		struct IsVector3Type
+		{
+			constexpr static const bool Value = std::is_convertible_v < T, Vector3<decltype(std::declval<T>().x)>>;
+		};
+
+		template<typename T>
+		constexpr bool IsVector3 = IsVector3Type<T>::Value;
+
+		template<typename T1, typename ... TypesList>
+		struct AllVector3Types	{
+			constexpr static const bool Value = IsVector3<T1> &&
+				AllVector3Types<TypesList...>::Value;
+		};
+
+		template<typename T1>
+		struct AllVector3Types<T1>
+		{
+			constexpr static const bool Value = IsVector3<T1>;
+		};
+
+		template<typename ... TypesList>
+		constexpr bool AllVector3 = AllVector3Types<TypesList...>::Value;
+
+
+#define IsVector3Like(TypeName) std::is_convertible_v<TypeName, Vector3<decltype(std::declval<TypeName>().x)>>
+
+
+		// Equality operators
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2>>>
+		bool operator==(const Vec3T1& a, const Vec3T2& b)
 		{
 			return a.x == b.x && a.y == b.y && a.z == b.z;
 		}
 
 		// Mutlitply a Vector by a scalar
-		template<typename T, typename S>
-		Vector3<T> operator*(const Vector3<T>& vec, S scale)
+		template<typename Vec3T1, typename S,
+			typename = std::enable_if_t<IsVector3<Vec3T1> && std::is_arithmetic<S>::value>>
+		auto operator * (const Vec3T1& vec, S scale)
 		{
-			return Vector3<T>(vec.x * scale, vec.y * scale, vec.z * scale);
-		}
-
-		// Divide a Vector by a scalar
-		template<typename T, typename S>
-		Vector3<T> operator/(const Vector3<T>& vec, S scale)
-		{
-			return Vector3<T>(vec.x / scale, vec.y / scale, vec.z / scale);
+			return Make_Vector(vec.x * scale, vec.y * scale, vec.z * scale);
 		}
 
 		// Multiply two vectors of the same type componentwise
-		template<typename T>
-		Vector3<T> operator*(const Vector3<T>& a, const Vector3<T>& b)
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t<IsVector3Like(Vec3T1) && IsVector3Like(Vec3T2)> >
+		auto operator * (const Vec3T1& a, const Vec3T2& b)
 		{
-			return Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
+			return Make_Vector(a.x * b.x, a.y * b.y, a.z * b.z);
 		}
 
-		// Divide two vectors of the same type componentwise
-		template<typename T>
-		Vector3<T> operator/(const Vector3<T>& a, const Vector3<T>& b)
+		// Divide a 3 component Vector by a scalar
+		template<typename Vec3T, typename S,
+			typename = std::enable_if_t<IsVector3<Vec3T> && std::is_arithmetic<S>::value>>
+		auto operator / (const Vec3T& vec, S scale)
 		{
-			return Vector3<T>(a.x / b.x, a.y / b.y, a.z / b.z);
+			return Make_Vector(vec.x / scale, vec.y / scale, vec.z / scale);
 		}
 
-		// Add two vectors of the same type componentwise
-		template<typename T>
-		Vector3<T> operator+(const Vector3<T>& vecA, const Vector3<T>& vecB)
+		// Divide two 3 component vectors componentwise
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t<IsVector3Like(Vec3T1) && IsVector3Like(Vec3T2)> >
+		auto operator / (const Vec3T1& a, const Vec3T2& b)
 		{
-			return Vector3<T>(vecA.x + vecB.x, vecA.y + vecB.y, vecA.z + vecB.z);
+			return Make_Vector(a.x / b.x, a.y / b.y, a.z / b.z);
 		}
 
-		// Subtract two vectors of the same type componentwise
-		template<typename T>
-		Vector3<T> operator-(const Vector3<T>& vecA, const Vector3<T>& vecB)
+		// Add two 3 component vectors componentwise
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t< AllVector3<Vec3T1, Vec3T2>>>
+		auto operator + (const Vec3T1& vecA, const Vec3T2& vecB)
 		{
-			return Vector3<T>(vecA.x - vecB.x, vecA.y - vecB.y, vecA.z - vecB.z);
+			return Make_Vector(vecA.x + vecB.x, vecA.y + vecB.y, vecA.z + vecB.z);
 		}
 
-		// Return the dot product of two vector3
-		template<typename T>
-		T Dot(const Vector3<T>& a, const Vector3<T>& b)
+		// Subtract two 3 componet vectors componentwise
+		template<typename Vec3T1, typename Vec3T2, 
+			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T1>>> 
+		auto operator - (const Vec3T1& vecA, const Vec3T2& vecB)
+		{
+			return Make_Vector(vecA.x - vecB.x, vecA.y - vecB.y, vecA.z - vecB.z);
+		}
+
+		// Return the dot product of two 3 component vectors
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T1>>>
+		auto Dot(const Vec3T1& a, const Vec3T2& b)
 		{
 			return a.x*b.x + a.y*b.y + a.z*b.z;
 		}
 
 		// Return the cross product of two vectors
-		template<typename T>
-		Vector3<T> Cross(const Vector3<T> &a, const Vector3<T> &b)
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2>>>
+		auto Cross(const Vec3T1 &a, const Vec3T2 &b)
 		{
-			return Vector3<T>(	a.y*b.z - a.z*b.y,
+			return Make_Vector(	a.y*b.z - a.z*b.y,
 								a.z*b.x - a.x*b.z,
 								a.x*b.y - a.y*b.x
 				);
 		}
 
 		// Return the square length of a vector3
-		template<typename T>
-		T Length2(const Vector3<T> &a)
+		template<typename Vec3T,
+			typename = std::enable_if_t<AllVector3<Vec3T>>>
+		auto Length2(const Vec3T &a)
 		{
 			return Dot(a, a);
 		}
 
 		// Return the length of a vector3
-		template<typename T>
-		float Length(const Vector3<T> &a)
+		template<typename Vec3T,
+			typename = std::enable_if_t<AllVector3<Vec3T>>>
+		auto Length(const Vec3T &a)
 		{
 			return sqrt(Length2(a));
 		}
 
 		// Alias the length function to return magnitude
-		template<typename T>
-		constexpr auto Magnitude(const Vector3<T>& a) ->decltype(Length(a))
+		template<typename Vec3T, 
+			typename = std::enable_if_t<AllVector3<Vec3T>>>
+		inline auto Magnitude(const Vec3T& a)
 		{
 			return Length(a);
 		}
 
 		// Normaliza a vector3
-		template<typename T>
-		Vector3<T> Normalize(const Vector3<T>& a)
+		template<typename Vec3T,
+			typename = std::enable_if_t<AllVector3<Vec3T>>>
+		auto Normalize(const Vec3T& a)
 		{
 			return a / Length(a);
 		}
 
 		// Compute the componentwise minimum of two vector3
-		template<typename T>
-		Vector3<T> Min(const Vector3<T> &a, const Vector3<T> &b)
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2>>>
+		auto Min(const Vec3T1 &a, const Vec3T2 &b)
 		{
-			return Vector3<T>(
+			return Make_Vector(
 				std::min(a.x, b.x),
 				std::min(a.y, b.y),
 				std::min(a.z, b.z));
 		}
 
 		// Compute the componentwise maximum of two vector4
-		template<typename T>
-		Vector3<T> Max(const Vector3<T> &a, const Vector3<T> &b)
+		template<typename Vec3T1, typename Vec3T2,
+			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2>>>
+		auto Max(const Vec3T1 &a, const Vec3T2 &b)
 		{
-			return Vector3<T>(
+			return Make_Vector(
 				std::max(a.x, b.x),
 				std::max(a.y, b.y),
 				std::max(a.z, b.z));
 		}
 
 		// Returns the compoenent wise clamped values between min and max.
-		template<typename T>
-		Vector3<T> Clamp(const Vector3<T> &value, const Vector3<T> &min, const Vector3<T> &max)
+		template<typename Vec3T1, typename Vec3T2, typename Vec3T3,
+			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2, Vec3T3>>>
+		auto Clamp(const Vec3T1 &value, const Vec3T2 &min, const Vec3T3 &max)
 		{
 			return Min(max, Max(min, value));
 		}

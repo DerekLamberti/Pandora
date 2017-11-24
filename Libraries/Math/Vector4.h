@@ -10,6 +10,7 @@ namespace Pandora {
 		struct Vector4
 		{
 		public:
+			using ValueType = T;
 			Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
 
 			template<typename S>
@@ -64,7 +65,7 @@ namespace Pandora {
 				x /= o.x;
 				y /= o.y;
 				z /= o.z;
-				w /= 0.w;
+				w /= o.w;
 				return (*this);
 			}
 

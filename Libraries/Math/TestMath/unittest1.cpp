@@ -8,6 +8,7 @@ namespace Microsoft {
 	namespace VisualStudio {
 		namespace CppUnitTestFramework
 		{
+			template <> static std::wstring ToString(const Pandora::Math::Vec3i& t) { RETURN_WIDE_STRING(t); }
 			template <> static std::wstring ToString(const Pandora::Math::Vec3f& t) { RETURN_WIDE_STRING(t); }
 			template <> static std::wstring ToString(const Pandora::Math::Vec4f& t) { RETURN_WIDE_STRING(t); }
 		}
@@ -41,7 +42,7 @@ namespace TestMath
 
 		TEST_METHOD(Vector3Scaling)
 		{
-			Vec3f a = Make_Vector(1.0f, 2.0f, 3.0f);			
+			Vec3f a = Make_Vector(1.0f, 2.0f, 3.0f);
 			Vec3f b = a * 3.0f;
 
 			Assert::AreEqual(3.0f, b.x, L"Test vector scales X.");
@@ -66,11 +67,11 @@ namespace TestMath
 			Vec3f b = Make_Vector(8.0f, 9.0f, 10.0f);
 			Vec3f c = a * b;
 			Vec3f d = b * a;
-
+			
 			Assert::AreEqual(8.0f, c.x, L"Test 2 vectors multiply X component wize.");
 			Assert::AreEqual(18.0f, c.y, L"Test 2 vectors multiply Y component wize.");
 			Assert::AreEqual(30.0f, c.z, L"Test 2 vectors multiply Z component wize.");
-
+			
 			Assert::AreEqual(c, d, L"Test commutivity of Vector multiplication");
 		}
 
@@ -123,7 +124,7 @@ namespace TestMath
 			float nLen = Length(normal);
 
 			Assert::AreEqual(1.0f, nLen, 0.0001f, L"Test vector normalization.");
-			
+
 		}
 
 		TEST_METHOD(Vector3Min)
@@ -159,6 +160,430 @@ namespace TestMath
 			Assert::AreEqual(4, d.x, L"Test clamped value x.");
 			Assert::AreEqual(5, d.y, L"Test clamped value y.");
 			Assert::AreEqual(6, d.z, L"Test clamped value z.");
+		}
+	};
+
+	TEST_CLASS(Vector3Swizzle)
+	{
+		TEST_METHOD(Vector3SwizzleXX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xx.x);
+			Assert::AreEqual(3, a.xx.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleXY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(3, a.xy.x);
+			Assert::AreEqual(4, a.xy.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleXZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(3, a.xz.x);
+			Assert::AreEqual(5, a.xz.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleYX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(4, a.yx.x);
+			Assert::AreEqual(3, a.yx.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleYY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(4, a.yy.x);
+			Assert::AreEqual(4, a.yy.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleYZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(4, a.yz.x);
+			Assert::AreEqual(5, a.yz.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleZX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(5, a.zx.x);
+			Assert::AreEqual(3, a.zx.y);
+		}
+		TEST_METHOD(Vector3SwizzleZY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(5, a.zy.x);
+			Assert::AreEqual(4, a.zy.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleZZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			Assert::AreEqual(5, a.zz.x);
+			Assert::AreEqual(5, a.zz.y);
+		}
+
+		TEST_METHOD(Vector3SwizzleXXX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xxx.x);
+			Assert::AreEqual(3, a.xxx.y);
+			Assert::AreEqual(3, a.xxx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXXY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xxy.x);
+			Assert::AreEqual(3, a.xxy.y);
+			Assert::AreEqual(4, a.xxy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXXZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xxz.x);
+			Assert::AreEqual(3, a.xxz.y);
+			Assert::AreEqual(5, a.xxz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXYX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xyx.x);
+			Assert::AreEqual(4, a.xyx.y);
+			Assert::AreEqual(3, a.xyx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXYY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xyy.x);
+			Assert::AreEqual(4, a.xyy.y);
+			Assert::AreEqual(4, a.xyy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXYZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xyz.x);
+			Assert::AreEqual(4, a.xyz.y);
+			Assert::AreEqual(5, a.xyz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXZX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xzx.x);
+			Assert::AreEqual(5, a.xzx.y);
+			Assert::AreEqual(3, a.xzx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXZY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xzy.x);
+			Assert::AreEqual(5, a.xzy.y);
+			Assert::AreEqual(4, a.xzy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleXZZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(3, a.xzz.x);
+			Assert::AreEqual(5, a.xzz.y);
+			Assert::AreEqual(5, a.xzz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYXX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yxx.x);
+			Assert::AreEqual(3, a.yxx.y);
+			Assert::AreEqual(3, a.yxx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYXY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yxy.x);
+			Assert::AreEqual(3, a.yxy.y);
+			Assert::AreEqual(4, a.yxy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYXZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yxz.x);
+			Assert::AreEqual(3, a.yxz.y);
+			Assert::AreEqual(5, a.yxz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYYX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yyx.x);
+			Assert::AreEqual(4, a.yyx.y);
+			Assert::AreEqual(3, a.yyx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYYY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yyy.x);
+			Assert::AreEqual(4, a.yyy.y);
+			Assert::AreEqual(4, a.yyy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYYZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yyz.x);
+			Assert::AreEqual(4, a.yyz.y);
+			Assert::AreEqual(5, a.yyz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYZX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yzx.x);
+			Assert::AreEqual(5, a.yzx.y);
+			Assert::AreEqual(3, a.yzx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYZY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yzy.x);
+			Assert::AreEqual(5, a.yzy.y);
+			Assert::AreEqual(4, a.yzy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleYZZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(4, a.yzz.x);
+			Assert::AreEqual(5, a.yzz.y);
+			Assert::AreEqual(5, a.yzz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleZXX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zxx.x);
+			Assert::AreEqual(3, a.zxx.y);
+			Assert::AreEqual(3, a.zxx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleZXY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zxy.x);
+			Assert::AreEqual(3, a.zxy.y);
+			Assert::AreEqual(4, a.zxy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleZXZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zxz.x);
+			Assert::AreEqual(3, a.zxz.y);
+			Assert::AreEqual(5, a.zxz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleZYX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zyx.x);
+			Assert::AreEqual(4, a.zyx.y);
+			Assert::AreEqual(3, a.zyx.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleZYY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zyy.x);
+			Assert::AreEqual(4, a.zyy.y);
+			Assert::AreEqual(4, a.zyy.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleZYZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zyz.x);
+			Assert::AreEqual(4, a.zyz.y);
+			Assert::AreEqual(5, a.zyz.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleZZX)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zzx.x);
+			Assert::AreEqual(5, a.zzx.y);
+			Assert::AreEqual(3, a.zzx.z);
+		}
+		TEST_METHOD(Vector3SwizzleZZY)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zzy.x);
+			Assert::AreEqual(5, a.zzy.y);
+			Assert::AreEqual(4, a.zzy.z);
+		}
+		TEST_METHOD(Vector3SwizzleZZZ)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			Assert::AreEqual(5, a.zzz.x);
+			Assert::AreEqual(5, a.zzz.y);
+			Assert::AreEqual(5, a.zzz.z);
+		}
+		TEST_METHOD(Vector3SwizzleAdd)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			auto b = Make_Vector(7, 8, 9);
+
+   			auto c = a.xxx + b;
+			auto d = b + a.xxx;
+
+			Assert::AreEqual(10, c.x);
+			Assert::AreEqual(11, c.y);
+			Assert::AreEqual(12, c.z);
+			Assert::AreEqual(c.x, d.x);
+			Assert::AreEqual(c.y, d.y);
+			Assert::AreEqual(c.z, d.z);
+		}
+		TEST_METHOD(Vector3SwizzleSub)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			auto b = Make_Vector(9, 8, 7);
+
+			auto c = a.xyz - b;
+			auto d = b - a.xyz;
+
+			Assert::AreEqual(-6, c.x);
+			Assert::AreEqual(-4, c.y);
+			Assert::AreEqual(-2, c.z);
+			Assert::AreEqual(6, d.x);
+			Assert::AreEqual(4, d.y);
+			Assert::AreEqual(2, d.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleMullVector)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			auto b = Make_Vector(7, 8, 9);
+
+			auto c = a.xyz * b.xyz;
+			Assert::AreEqual(21, c.x);
+			Assert::AreEqual(32, c.y);
+			Assert::AreEqual(45, c.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleMulScalar)
+		{
+			auto a = Make_Vector(3, 4, 5);
+
+			auto b = a.xyz * 3;
+
+			Assert::AreEqual(9, b.x);
+			Assert::AreEqual(12, b.y);
+			Assert::AreEqual(15, b.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleDivVector)
+		{
+			auto a = Make_Vector(21, 32, 45);
+			auto b = Make_Vector(3, 4, 5);
+			auto c = a / b;
+
+			Assert::AreEqual(7, c.x);
+			Assert::AreEqual(8, c.y);
+			Assert::AreEqual(9, c.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleDivScalar)
+		{
+			auto a = Make_Vector(9, 12, 15);
+
+			auto b = a.xyz / 3;
+
+			Assert::AreEqual(3, b.x);
+			Assert::AreEqual(4, b.y);
+			Assert::AreEqual(5, b.z);
+		}
+
+		TEST_METHOD(Vector3SwizzleDot)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			auto b = Make_Vector(7, 8, 9);
+
+			auto c = Dot(a.xyz, b);
+			auto d = Dot(a, b.xyz);
+			auto e = Dot(a.xyz, b.xyz);
+
+			Assert::AreEqual(98, c);
+			Assert::AreEqual(98, d);
+			Assert::AreEqual(98, e);
+		}
+
+		TEST_METHOD(Vector3SwizzleCross)
+		{
+			auto a = Make_Vector(3, 4, 5);
+			auto b = Make_Vector(7, 8, 9);
+
+			auto c = Cross(a, b);
+			auto d = Cross(a.xyz, b.xyz);
+			auto e = Cross(a.xyz, b);
+			auto f = Cross(a, b.xyz);
+
+			Assert::AreEqual(c, d);
+			Assert::AreEqual(c, e);
+			Assert::AreEqual(c, f);
+		}
+
+		TEST_METHOD(VectorSwizzleLength2)
+		{
+			auto a = Make_Vector(3.0f, 4.0f, 5.0f);
+
+			auto c = Length2(a);
+			auto d = Length2(a.xyz);
+			auto e = Length2(a.yxz);
+			auto f = Length2(a.zxy);
+
+			Assert::AreEqual(c, d);
+			Assert::AreEqual(c, e);
+			Assert::AreEqual(c, f);
 		}
 	};
 

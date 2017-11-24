@@ -5,6 +5,9 @@
 namespace Pandora
 {
 	namespace Math {
+		// Generic 2 component Vector class.
+		template<typename t>
+		struct Vector2;
 
 		// Generic 3 component Vector class.
 		template<typename T>
@@ -13,7 +16,6 @@ namespace Pandora
 		// Generic 4 component Vector class.
 		template<typename T>
 		struct Vector4;
-
 
 		// Define some common Vector3 types.
 		using Vec3d = Vector3<float64>;
@@ -48,110 +50,113 @@ namespace Pandora
 
 		
 		// Equality operators
-		template<typename T>
-		bool operator==(const Vector3<T>& a, const Vector3<T>& b);
+	//	template<typename T>
+	//	bool operator==(const Vector3<T>& a, const Vector3<T>& b);
 
 		template<typename T>
 		bool operator==(const Vector4<T>& a, const Vector4<T>& b);
 
 		
 		// Mutlitply a Vector by a scalar
-		template<typename T, typename S>
-		Vector3<T> operator*(const Vector3<T>& vec, S s);
+//		template<typename T, typename S>
+//		Vector3<T> operator*(const Vector3<T>& vec, S s);
 
-		template<typename T, typename S>
-		Vector4<T> operator*(const Vector4<T>& vec, S s);
-
+//		template<typename T, typename S>
+//		Vector4<T> operator*(const Vector4<T>& vec, S s);
 
 		// Divide a vector by a scalar
-		template<typename T, typename S>
-		Vector3<T> operator/(const Vector3<T> &a, S s);
+//		template<typename T, typename S>
+//		Vector3<T> operator/(const Vector3<T> &a, S s);
 
 		template<typename T, typename S>
 		Vector4<T> operator/(const Vector4<T> &a, S s);
 		
 
 		// Multiply two vectors of the same type componentwise
-		template<typename T>
-		Vector3<T> operator*(const Vector3<T> &a, const Vector3<T> &b);
+		//template<typename T>
+		//Vector3<T> operator*(const Vector3<T> &a, const Vector3<T> &b);
 
-		template<typename T>
-		Vector4<T> operator*(const Vector4<T> &a, const Vector4<T> &b);
+//		template<typename T>
+//		Vector4<T> operator*(const Vector4<T> &a, const Vector4<T> &b);
 
 
 		// Divide two vectors of the same type componentwise
-		template<typename T>
-		Vector3<T> operator/(const Vector3<T> &a, const Vector3<T> &b);
+		//template<typename T>
+		//Vector3<T> operator/(const Vector3<T> &a, const Vector3<T> &b);
 
 		template<typename T>
 		Vector4<T> operator/(const Vector4<T> &a, const Vector4<T> &b);
 
 
 		// Add two vectors using the + operator componentwise
-		template<typename T>
-		Vector3<T> operator+(const Vector3<T> &a, const Vector3<T> &b);
+//		template<typename T>
+//		Vector3<T> operator+(const Vector3<T> &a, const Vector3<T> &b);
 
 		template<typename T>
 		Vector4<T> operator+(const Vector4<T> &a, const Vector4<T> &b);
 
+		// Add a swizzled vector by a Vector3 componentwise
+//		template<typename T, typename A, typename B1, typename C>
+//		Vector3<T> operator+(const Vector3<T>::template Swizzle<A, B1, C>& swizzled,
+//			const Vector3<T>& other);
 
 		// Subtract two vectors of the same type componentwise
-		template<typename T>
-		Vector3<T> operator-(const Vector3<T> &a, const Vector3<T> &b);
+//		template<typename T>
+	//	Vector3<T> operator-(const Vector3<T> &a, const Vector3<T> &b);
 
 		template<typename T>
 		Vector4<T> operator-(const Vector4<T> &a, const Vector4<T> &b);
 
 
 		// Return the dot product of two vector3
-		template<typename T> 
-		T Dot(const Vector3<T>& a, const Vector3<T>& b);
+//		template<typename T> 
+//		T Dot(const Vector3<T>& a, const Vector3<T>& b);
 		
 
 		// Return the cross product of two vector3
-		template<typename T>
-		Vector3<T> Cross(const Vector3<T> &a, const Vector3<T> &b);
+//		template<typename T>
+//		Vector3<T> Cross(const Vector3<T> &a, const Vector3<T> &b);
 
 
 		// Return the square length of a vector3
-		template<typename T>
-		T Length2(const Vector3<T> &a);
+//		template<typename T>
+	//	T Length2(const Vector3<T> &a);
 
 
 		// Return the length of a vector3
-		template<typename T>
-		float Length(const Vector3<T> &a);
+//		template<typename T>
+//		float Length(const Vector3<T> &a);
 
 
 		// Alias the length function to return magnitude
-		template<typename T>
-		constexpr auto Magnitude(const Vector3<T>& a) ->decltype(Length(a));
+//		template<typename T>
+//		constexpr auto Magnitude(const Vector3<T>& a) ->decltype(Length(a));
 
 
 		// Normaliza a vector3
-		template<typename T>
-		Vector3<T> Normalize(const Vector3<T>& a);
+//		template<typename T>
+//		Vector3<T> Normalize(const Vector3<T>& a);
 
 
 		// Compute the componentwise minimum of two vector3
-		template<typename T>
-		Vector3<T> Min(const Vector3<T> &a, const Vector3<T> &b);
+//		template<typename T>
+//		Vector3<T> Min(const Vector3<T> &a, const Vector3<T> &b);
 
 		template<typename T>
 		Vector4<T> Min(const Vector4<T> &a, const Vector4<T> &b);
 
 
 		// Compute the componentwise maximum of two vector4
-		template<typename T>
-		Vector3<T> Max(const Vector3<T> &a, const Vector3<T> &b);
+//		template<typename T>
+//		Vector3<T> Max(const Vector3<T> &a, const Vector3<T> &b);
 
 		template<typename T>
 		Vector4<T> Max(const Vector4<T> &a, const Vector4<T> &b);
 
 
 		// Returns the compoenent wise clamped values between min and max.
-		template<typename T>
-		Vector3<T> Clamp(const Vector3<T> &value, const Vector3<T> &min, const Vector3<T> &max);
+//		template<typename T>
+//		Vector3<T> Clamp(const Vector3<T> &value, const Vector3<T> &min, const Vector3<T> &max);
 
 		template<typename T>
 		Vector4<T> Clamp(const Vector4<T> &value, const Vector4<T> &min, const Vector4<T> &max);
@@ -159,6 +164,6 @@ namespace Pandora
 	}
 }
 
-
+#include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
