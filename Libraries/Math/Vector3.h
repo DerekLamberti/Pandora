@@ -7,6 +7,8 @@ namespace Pandora
 {
 	namespace Math
 	{
+#define IsVector3Like(TypeName) std::is_convertible_v<TypeName, Vector3<decltype(std::declval<TypeName>().x)>>
+
 		// Generic 3 component Vector class.
 		template<typename T>
 		struct Vector3 : public SwizzleHelper<T>
@@ -33,7 +35,8 @@ namespace Pandora
 				: Vector3(other.x, other.y, other.z)
 			{}
 
-			template<typename S>
+			template<typename S,
+				typename = std::enable_if_t<std::is_arithmetic<S>::value>>
 			Vector3<T>& operator*=(S s)
 			{
 				x *= s;
@@ -42,7 +45,8 @@ namespace Pandora
 				return (*this);
 			}
 
-			template<typename S>
+			template<typename S,
+				typename = std::enable_if_t<std::is_arithmetic<S>::value>>
 			Vector3<T>& operator/=(S s)
 			{
 				x /= s;
@@ -59,6 +63,17 @@ namespace Pandora
 				return (*this);
 			}
 
+			template<typename Vec3Type,
+				typename = std::enable_if_t<IsVector3Like(Vec3Type) &&
+				!std::is_same<Vec3Type, Vector3<T>>::value>>
+				Vector3<T>& operator+=(const Vec3Type &o)
+			{
+				Vector3<T> other = static_cast<Vector3<T>>(o);
+				(*this) += other;
+				return (*this);
+			}
+
+
 			Vector3<T>& operator-=(const Vector3<T> &o)
 			{
 				x -= o.x;
@@ -66,6 +81,18 @@ namespace Pandora
 				z -= o.z;
 				return (*this);
 			}
+
+			
+			template<typename Vec3T,
+				typename = std::enable_if_t<IsVector3Like(Vec3T) && 
+				!std::is_same<Vec3T, Vector3<T>>::value>>
+			Vector3<T>& operator-=(const Vec3T &o)
+			{
+				Vector3<T> other = static_cast<Vector3<T>>(o);
+				(*this) -= other;
+				return (*this);
+			}
+			
 
 			Vector3<T>& operator*=(const Vector3<T> &o)
 			{
@@ -75,11 +102,32 @@ namespace Pandora
 				return (*this);
 			}
 
+			template<typename Vec3T,
+				typename = std::enable_if_t<IsVector3Like(Vec3T) &&
+				!std::is_same<Vec3T, Vector3<T>>::value>>
+			Vector3<T>& operator*=(const Vec3T &o)
+			{
+				Vector3<T> other = static_cast<Vector3<T>>(o);
+				(*this) *= other;
+				return (*this);
+			}
+
+
 			Vector3<T>& operator/=(const Vector3<T> &o)
 			{
 				x /= o.x;
 				y /= o.y;
 				z /= o.z;
+				return (*this);
+			}
+
+			template<typename Vec3T,
+				typename = std::enable_if_t<IsVector3Like(Vec3T) &&
+				!std::is_same<Vec3T, Vector3<T>>::value>>
+			Vector3<T>& operator/=(const Vec3T &o)
+			{
+				Vector3<T> other = o;
+				(*this) /= other;
 				return (*this);
 			}
 
@@ -148,7 +196,6 @@ namespace Pandora
 		constexpr bool AllVector3 = AllVector3Types<TypesList...>::Value;
 
 
-#define IsVector3Like(TypeName) std::is_convertible_v<TypeName, Vector3<decltype(std::declval<TypeName>().x)>>
 
 
 		// Equality operators

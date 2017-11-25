@@ -138,7 +138,6 @@ namespace Pandora {
 			Swizzle2T& operator=(const Swizzle2T& other) = delete;
 			Swizzle2T& operator=(const Vector2<T>& other) = delete;
 
-			T GetX() { this->x; };
 			operator Vector2<T>() const { return Vector2<T>(
 				Swizzle2T::x, 
 				Swizzle2T::y); }

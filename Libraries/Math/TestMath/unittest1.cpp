@@ -482,6 +482,11 @@ namespace TestMath
 			Assert::AreEqual(c.x, d.x);
 			Assert::AreEqual(c.y, d.y);
 			Assert::AreEqual(c.z, d.z);
+
+			a += b.xxx;
+			Assert::AreEqual(10, a.x);
+			Assert::AreEqual(11, a.y);
+			Assert::AreEqual(12, a.z);
 		}
 		TEST_METHOD(Vector3SwizzleSub)
 		{
@@ -497,6 +502,9 @@ namespace TestMath
 			Assert::AreEqual(6, d.x);
 			Assert::AreEqual(4, d.y);
 			Assert::AreEqual(2, d.z);
+
+			a -= a.xxx;
+			Assert::AreEqual(Make_Vector(0, 1, 2), a);
 		}
 
 		TEST_METHOD(Vector3SwizzleMullVector)
@@ -508,6 +516,9 @@ namespace TestMath
 			Assert::AreEqual(21, c.x);
 			Assert::AreEqual(32, c.y);
 			Assert::AreEqual(45, c.z);
+
+			a *= a.xxx;
+			Assert::AreEqual(Make_Vector(9, 12, 15), a);
 		}
 
 		TEST_METHOD(Vector3SwizzleMulScalar)
@@ -519,17 +530,23 @@ namespace TestMath
 			Assert::AreEqual(9, b.x);
 			Assert::AreEqual(12, b.y);
 			Assert::AreEqual(15, b.z);
+
+			a *= 3;
+			Assert::AreEqual(a, b);
 		}
 
 		TEST_METHOD(Vector3SwizzleDivVector)
 		{
 			auto a = Make_Vector(21, 32, 45);
 			auto b = Make_Vector(3, 4, 5);
-			auto c = a / b;
+			auto c = a.xyz / b.xyz;
 
 			Assert::AreEqual(7, c.x);
 			Assert::AreEqual(8, c.y);
 			Assert::AreEqual(9, c.z);
+
+			a /= a.xyz;
+			Assert::AreEqual(Make_Vector(1, 1, 1), a);
 		}
 
 		TEST_METHOD(Vector3SwizzleDivScalar)
@@ -541,6 +558,9 @@ namespace TestMath
 			Assert::AreEqual(3, b.x);
 			Assert::AreEqual(4, b.y);
 			Assert::AreEqual(5, b.z);
+
+			a /= b.xxx;
+			Assert::AreEqual(a, b);
 		}
 
 		TEST_METHOD(Vector3SwizzleDot)
