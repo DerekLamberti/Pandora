@@ -164,6 +164,23 @@ namespace Pandora
 			return Vector3<T>(x, y, z);
 		}
 
+		template<typename T, typename...Args, template<typename, typename...> class VecT,
+			typename = std::enable_if_t<IsVec2V<VecT<T, Args...>>>
+		>
+			Vector3<T> Make_Vector(const VecT<T, Args...>& xy, T z)
+		{
+			return Vector3<T>(xy.x, xy.y, z);
+		}
+
+		template<typename T, typename...Args, template<typename, typename...> class VecT,
+			typename = std::enable_if_t<IsVec2V<VecT<T, Args...>>>
+		>
+			Vector3<T> Make_Vector(T x, const VecT<T, Args...>& yz)
+		{
+			return Vector3<T>(x, yz.x, yz.y);
+		}
+
+
 		// Stream operator Vector3
 		template<typename T, typename StreamType>
 		StreamType& operator<<(StreamType& stream, const Vector3<T> &obj)
@@ -185,12 +202,6 @@ namespace Pandora
 		{
 			return !(a == b);
 		}
-
-		// Equality operators
-//		bool operator==(const Vec3T1& a, const Vec3T2& b)
-//		{
-//			return a.x == b.x && a.y == b.y && a.z == b.z;
-//		}
 
 		// Mutlitply a Vector by a scalar
 		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
@@ -215,18 +226,6 @@ namespace Pandora
 			return Make_Vector(a.x * b.x, a.y * b.y, a.z*b.z);
 		}
 
-//		// Divide a 3 component Vector by a scalar
-//		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
-//					typename S,
-//					typename = std::enable_if_t<IsVec3V<Vec3T1<T, Args1...>> &&
-//												std::is_arithmetic_v<S>>
-//			>
-//		auto operator/(const Vec3T1<T, Args1...> &a, const S &s)
-//			-> Vector3<decltype(std::declval<T>() / std::declval<S>(s))>
-//		{
-//			return Make_Vector(a.x / s, a.y / s, a.z / s);
-//		}
-//
 		template<	typename Vec2T,
 					typename S,
 					typename = std::enable_if_t<IsVec3V<Vec2T> &&
@@ -235,7 +234,6 @@ namespace Pandora
 			auto operator/(const Vec2T &a, S s)
 			-> Vector3<decltype(std::declval<typename Vec2T::ValueType>() / std::declval<S>())>
 		{
-//|#pragma message("got here v3")
 			return Make_Vector(a.x / s, a.y / s, a.z / s);
 		}
 
@@ -328,7 +326,6 @@ namespace Pandora
 		auto Clamp(const Vec3T1<T, Args1...> &val, const Vec3T2<U, Args2...> &min, const Vec3T3<V, Args3...> &max)
 			->Vector3<RemoveCVRefT<T>>
 		{
-
 			static_assert(std::is_same_v<T, U> && std::is_same_v<T, V>,
 				"Cannot clamp between Vector3 with different value types. Return type is ambiguous.");
 

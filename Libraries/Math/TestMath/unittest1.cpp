@@ -615,6 +615,22 @@ namespace TestMath
 			Vec3f vec3f = Make_Vector(4.4f, 5.5f, 6.6f);
 			TEST_V3(vec3f, 4.4f, 5.5f, 6.6f);
 
+			{
+				Vector2<float> ab = Make_Vector(7.0f, 8.0f);
+				Vec3f a = Make_Vector(ab, 9.0f);
+				Vec3f b = Make_Vector(6.0f, ab);
+				TEST_V3(a, 7.0f, 8.0f, 9.0f);
+				TEST_V3(b, 6.0f, 7.0f, 8.0f);
+			}
+
+			{
+				Vector2<float> ab = Make_Vector(7.0f, 8.0f);
+				Vec3f a = Make_Vector(ab.xy, 9.0f);
+				Vec3f b = Make_Vector(6.0f, ab.xy);
+				TEST_V3(a, 7.0f, 8.0f, 9.0f);
+				TEST_V3(b, 6.0f, 7.0f, 8.0f);
+			}
+
 			auto ptr = std::make_unique<Vector3<int32>>(3, 4, 5);
 			TEST_V3((*ptr), 3, 4, 5);
 
@@ -1141,6 +1157,23 @@ namespace TestMath
 
 			Vec4f vec4f = Make_Vector(4.4f, 5.5f, 6.6f, 7.7f);
 			TEST_V4(vec4f, 4.4f, 5.5f, 6.6f, 7.7f);
+
+			Vector2<float> ab = Make_Vector(4.0f, 5.0f);
+			Vector2<float> cd = Make_Vector(6.0f, 7.0f);
+			Vec4f a = Make_Vector(3.0f, ab, 6.0f);
+			TEST_V4(a, 3.0f, 4.0f, 5.0f, 6.0f);
+			Vec4f b = Make_Vector(2.0f, 3.0f, ab);
+			TEST_V4(b, 2.0f, 3.0f, 4.0f, 5.0f);
+			Vec4f c = Make_Vector(ab, 6.0f, 7.0f);
+			TEST_V4(c, 4.0f, 5.0f, 6.0f, 7.0f);
+			Vec4f d = Make_Vector(ab, cd);
+			TEST_V4(d, 4.0f, 5.0f, 6.0f, 7.0f);
+
+			Vector3<float> abc = Make_Vector(3.0f, 4.0f, 5.0f);
+			Vec4f e = Make_Vector(2.0f, abc);
+			TEST_V4(e, 2.0f, 3.0f, 4.0f, 5.0f);
+			Vec4f f = Make_Vector(abc, 6.0f);
+			TEST_V4(f, 3.0f, 4.0f, 5.0f, 6.0f);
 
 			auto ptr = std::make_unique<Vector4<int32>>(3, 4, 5, 6);
 			TEST_V4((*ptr), 3, 4, 5, 6);

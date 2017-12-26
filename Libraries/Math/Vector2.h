@@ -157,7 +157,7 @@ namespace Pandora {
 			}
 		};
 
-		template<typename T>
+		template<typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
 		Vector2<T> Make_Vector(T x, T y)
 		{
 			return Vector2<T>(x, y);

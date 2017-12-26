@@ -186,6 +186,61 @@ namespace Pandora {
 			return Vector4<T>(x, y, z, w);
 		}
 
+		// Create a vector4 from two single values and, a two component vector
+		template<typename T, typename...Args, template<typename, typename...> class VecT,
+			typename = std::enable_if_t<IsVec2V<VecT<T, Args...>>>
+		>
+			Vector4<T> Make_Vector(T x, const VecT<T, Args...>& yz, T w)
+		{
+			return Vector4<T>(x, yz.x, yz.y, w);
+		}
+
+		template<typename T, typename...Args, template<typename, typename...> class VecT,
+			typename = std::enable_if_t<IsVec2V<VecT<T, Args...>>>
+		>
+			Vector4<T> Make_Vector(T x, T y, const VecT<T, Args...>& zw)
+		{
+			return Vector4<T>(x, y, zw.x, zw.y);
+		}
+
+		template<typename T, typename...Args, template<typename, typename...> class VecT,
+			typename = std::enable_if_t<IsVec2V<VecT<T, Args...>>>
+		>
+			Vector4<T> Make_Vector(const VecT<T, Args...>& xy, T z, T w)
+		{
+			return Vector4<T>(xy.x, xy.y, z, w);
+		}
+
+		// Create a vector4 from two, two component vectors
+		template<	typename T, typename...Args1, template<typename, typename...> class VecT1,
+					typename U, typename...Args2, template<typename, typename...> class VecT2,
+					typename = std::enable_if_t<AllVector2<VecT1<T, Args1...>, VecT2<U, Args2...>>>
+		>
+			Vector4<T> Make_Vector(const VecT1<T, Args1...>& xy, const VecT2<U, Args2...> zw)
+		{
+			static_assert(std::is_same_v<VecT1<T, Args1...>, VecT2<U, Args2...>>, "Error: different input types");
+
+			return Vector4<T>(xy.x, xy.y, zw.x, zw.y);
+		}
+
+		// Create a Vector4 from a three component vector and a single value
+		template<typename T, typename...Args, template<typename, typename...> class VecT,
+			typename = std::enable_if_t<IsVec3V<VecT<T, Args...>>>
+		>
+			Vector4<T> Make_Vector(const VecT<T, Args...>& xyz, T w)
+		{
+			return Vector4<T>(xyz.x, xyz.y, xyz.z, w);
+		}
+
+		// Create a Vector4 from a single value and a three component vector
+		template<typename T, typename...Args, template<typename, typename...> class VecT,
+			typename = std::enable_if_t<IsVec3V<VecT<T, Args...>>>
+		>
+		Vector4<T> Make_Vector(T x, const VecT<T, Args...>& yzw)
+		{
+			return Vector4<T>(x, yzw.x, yzw.y, yzw.z);
+		}
+
 		// Create a vector4 from a vector3 and a w
 		template<typename T>
 		Vector4<T> Make_Vector(const Vector3<T>& i, T w)
