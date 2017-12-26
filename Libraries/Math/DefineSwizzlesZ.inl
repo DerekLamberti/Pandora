@@ -1,0 +1,97 @@
+using XZ = Swizzle2<SX, P1, SY>;
+using YZ = Swizzle2<P1, SX, SY>;
+using ZX = Swizzle2<SY, P1, SX>;
+using ZY = Swizzle2<P1, SY, SX>;
+using ZZ = Swizzle2<P1, P2, UXY>;
+
+using XXZ = Swizzle3<UXY, P1, SZ>;
+using XYZ = Swizzle3<SX, SY, SZ>;
+using XZX = Swizzle3<UXZ, P1, SY>;
+using XZY = Swizzle3<SX, SZ, SY>;
+using XZZ = Swizzle3<SX, P1, UYZ>;
+
+using YXZ = Swizzle3<SY, SX, SZ>;
+using YYZ = Swizzle3<P1, UXY, SZ>;
+using YZX = Swizzle3<SZ, SX, SY>;
+using YZY = Swizzle3<P1, UXZ, SY>;
+using YZZ = Swizzle3<P1, SX, UYZ>;
+
+using ZXX = Swizzle3<UYZ, P1, SX>;
+using ZXY = Swizzle3<SY, SZ, SX>;
+using ZXZ = Swizzle3<SY, P1, UXZ>;
+using ZYX = Swizzle3<SZ, SY, SX>;
+using ZYY = Swizzle3<P1, UYZ, SX>;
+using ZYZ = Swizzle3<P1, SY, UXZ>;
+using ZZX = Swizzle3<SZ, P1, UXY>;
+using ZZY = Swizzle3<P1, SZ, UXY>;
+using ZZZ = Swizzle3<P1, P2, UXYZ>;
+
+using XXXZ = Swizzle4<UXYZ, P1, SW>;
+using XXYZ = Swizzle4<UXY, SZ, SW>;
+using XXZX = Swizzle4<UXYW, P1, SZ>;
+using XXZY = Swizzle4<UXY, SW, SZ>;
+using XXZZ = Swizzle4<UXY, P1, UZW>;
+using XYXZ = Swizzle4<UXZ, SY, SW>;
+using XYYZ = Swizzle4<SX, UYZ, SW>;
+using XYZX = Swizzle4<UXW, SY, SZ>;
+using XYZY = Swizzle4<SX, UYW, SZ>;
+using XYZZ = Swizzle4<SX, SY, UZW>;
+using XZXX = Swizzle4<UXZW, P1, SY>;
+using XZXY = Swizzle4<UXZ, SW, SY>;
+using XZXZ = Swizzle4<UXZ, P1, UYW>;
+using XZYX = Swizzle4<UXW, SZ, SY>;
+using XZYY = Swizzle4<SX, UZW, SY>;
+using XZYZ = Swizzle4<SX, SZ, UYW>;
+using XZZX = Swizzle4<UXW, P1, UYZ>;
+using XZZY = Swizzle4<SX, SW, UYZ>;
+using XZZZ = Swizzle4<SX, P1, UYZW>;
+
+using YXXZ = Swizzle4<UYZ, SX, SW>;
+using YXYZ = Swizzle4<SY, UXZ, SW>;
+using YXZX = Swizzle4<UYW, SX, SZ>;
+using YXZY = Swizzle4<SY, UXW, SZ>;
+using YXZZ = Swizzle4<SY, SX, UZW>;
+using YYXZ = Swizzle4<SZ, UXY, SW>;
+using YYYZ = Swizzle4<P1, UXYZ, SW>;
+using YYZX = Swizzle4<SW, UXY, SZ>;
+using YYZY = Swizzle4<P1, UXYW, SZ>;
+using YYZZ = Swizzle4<P1, UXY, UZW>;
+using YZXX = Swizzle4<UZW, SX, SY>;
+using YZXY = Swizzle4<SZ, UXW, SY>;
+using YZXZ = Swizzle4<SZ, SX, UYW>;
+using YZYX = Swizzle4<SW, UXZ, SY>;
+using YZYY = Swizzle4<P1, UXZW, SY>;
+using YZYZ = Swizzle4<P1, UXZ, UYW>;
+using YZZX = Swizzle4<SW, SX, UYZ>;
+using YZZY = Swizzle4<P1, UXW, UYZ>;
+using YZZZ = Swizzle4<P1, SX, UYZW>;
+
+using ZXXX = Swizzle4<UYZW, P1, SX>;
+using ZXXY = Swizzle4<UYZ, SW, SX>;
+using ZXXZ = Swizzle4<UYZ, P1, UXW>;
+using ZXYX = Swizzle4<UYW, SZ, SX>;
+using ZXYY = Swizzle4<SY, UZW, SX>;
+using ZXYZ = Swizzle4<SY, SZ, UXW>;
+using ZXZX = Swizzle4<UYW, P1, UXZ>;
+using ZXZY = Swizzle4<SY, SW, UXZ>;
+using ZXZZ = Swizzle4<SY, P1, UXZW>;
+
+using ZYXX = Swizzle4<UZW, SY, SX>;
+using ZYXY = Swizzle4<SZ, UYW, SX>;
+using ZYXZ = Swizzle4<SZ, SY, UXW>;
+using ZYYX = Swizzle4<SW, UYZ, SX>;
+using ZYYY = Swizzle4<P1, UYZW, SX>;
+using ZYYZ = Swizzle4<P1, UYZ, UXW>;
+using ZYZX = Swizzle4<SW, SY, UXZ>;
+using ZYZY = Swizzle4<P1, UYW, UXZ>;
+using ZYZZ = Swizzle4<P1, SY, UXZW>;
+
+using ZZXX = Swizzle4<UZW, P1, UXY>;
+using ZZXY = Swizzle4<SZ, SW, UXY>;
+using ZZXZ = Swizzle4<SZ, P1, UXYW>;
+using ZZYX = Swizzle4<SW, SZ, UXY>;
+using ZZYY = Swizzle4<P1, UZW, UXY>;
+using ZZYZ = Swizzle4<P1, SZ, UXYW>;
+using ZZZX = Swizzle4<SW, P1, UXYZ>;
+using ZZZY = Swizzle4<P1, SW, UXYZ>;
+using ZZZZ = Swizzle4<P1, P2, UXYZW>;

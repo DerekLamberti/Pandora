@@ -2,12 +2,12 @@
 #include <type_traits>
 
 #include "SwizzleHelper.h"
+#include "../Base/TypeHelpers.h"
 
 namespace Pandora
 {
 	namespace Math
 	{
-#define IsVector3Like(TypeName) std::is_convertible_v<TypeName, Vector3<decltype(std::declval<TypeName>().x)>>
 
 		// Generic 3 component Vector class.
 		template<typename T>
@@ -16,17 +16,6 @@ namespace Pandora
 		public:
 			using ValueType = T;
 
-			using typename SwizzleHelper<T>::UXY;
-			using typename SwizzleHelper<T>::UXZ;
-			using typename SwizzleHelper<T>::UYZ;
-			using typename SwizzleHelper<T>::UXYZ;
-			using typename SwizzleHelper<T>::SX;
-			using typename SwizzleHelper<T>::SY;
-			using typename SwizzleHelper<T>::SZ;
-
-			template<int N>
-			using Offset = typename SwizzleHelper<T>:: template Offset<N>;
-
 			Vector3(T ix, T iy, T iz) 
 				: x(ix), y(iy), z(iz) 
 			{}
@@ -34,6 +23,19 @@ namespace Pandora
 			Vector3(const Vector3& other)
 				: Vector3(other.x, other.y, other.z)
 			{}
+
+			Vector3& operator()()
+			{
+				return (*this);
+			}
+
+			Vector3& operator=(const Vector3& other)
+			{
+				x = other.x;
+				y = other.y;
+				z = other.z;
+				return (*this);
+			}
 
 			template<typename S,
 				typename = std::enable_if_t<std::is_arithmetic<S>::value>>
@@ -64,7 +66,7 @@ namespace Pandora
 			}
 
 			template<typename Vec3Type,
-				typename = std::enable_if_t<IsVector3Like(Vec3Type) &&
+				typename = std::enable_if_t<IsVec3<Vec3Type> &&
 				!std::is_same<Vec3Type, Vector3<T>>::value>>
 				Vector3<T>& operator+=(const Vec3Type &o)
 			{
@@ -84,7 +86,7 @@ namespace Pandora
 
 			
 			template<typename Vec3T,
-				typename = std::enable_if_t<IsVector3Like(Vec3T) && 
+				typename = std::enable_if_t<IsVec3<Vec3T> && 
 				!std::is_same<Vec3T, Vector3<T>>::value>>
 			Vector3<T>& operator-=(const Vec3T &o)
 			{
@@ -103,7 +105,7 @@ namespace Pandora
 			}
 
 			template<typename Vec3T,
-				typename = std::enable_if_t<IsVector3Like(Vec3T) &&
+				typename = std::enable_if_t<IsVec3<Vec3T> &&
 				!std::is_same<Vec3T, Vector3<T>>::value>>
 			Vector3<T>& operator*=(const Vec3T &o)
 			{
@@ -121,9 +123,9 @@ namespace Pandora
 				return (*this);
 			}
 
-			template<typename Vec3T,
-				typename = std::enable_if_t<IsVector3Like(Vec3T) &&
-				!std::is_same<Vec3T, Vector3<T>>::value>>
+			template<	typename Vec3T,
+						typename = std::enable_if_t<IsVec3<Vec3T> &&
+									!std::is_same<Vec3T, Vector3<T>>::value>>
 			Vector3<T>& operator/=(const Vec3T &o)
 			{
 				Vector3<T> other = o;
@@ -132,16 +134,16 @@ namespace Pandora
 			}
 
 		private:
-#include "DefineSwizzle2.inl"
-#include "DefineSwizzle2withZ.inl"
-#include "DefineSwizzle3.inl"
+#include "DefineSwizzleTypes.inl"
+#include "DefineSwizzlesX.inl"
+#include "DefineSwizzlesY.inl"
+#include "DefineSwizzlesZ.inl"
 			
 		public:
-
 			union {
-#include "DeclareSwizzle2.inl"
-#include "DeclareSwizzle2WithZ.inl"
-#include "DeclareSwizzle3.inl"
+#include "DeclareSwizzlesX.inl"
+#include "DeclareSwizzlesY.inl"
+#include "DeclareSwizzlesZ.inl"
 
 				struct
 				{
@@ -170,70 +172,81 @@ namespace Pandora
 			return stream;
 		}
 
-
-		template<typename T>
-		struct IsVector3Type
-		{
-			constexpr static const bool Value = std::is_convertible_v < T, Vector3<decltype(std::declval<T>().x)>>;
-		};
-
-		template<typename T>
-		constexpr bool IsVector3 = IsVector3Type<T>::Value;
-
-		template<typename T1, typename ... TypesList>
-		struct AllVector3Types	{
-			constexpr static const bool Value = IsVector3<T1> &&
-				AllVector3Types<TypesList...>::Value;
-		};
-
-		template<typename T1>
-		struct AllVector3Types<T1>
-		{
-			constexpr static const bool Value = IsVector3<T1>;
-		};
-
-		template<typename ... TypesList>
-		constexpr bool AllVector3 = AllVector3Types<TypesList...>::Value;
-
-
-
-
-		// Equality operators
-		template<typename Vec3T1, typename Vec3T2,
-			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2>>>
-		bool operator==(const Vec3T1& a, const Vec3T2& b)
+		template<typename VecT1, typename VecT2>
+		std::enable_if_t<AllVector3<VecT1, VecT2>, bool>
+			operator==(const VecT1& a, const VecT2& b)
 		{
 			return a.x == b.x && a.y == b.y && a.z == b.z;
 		}
 
-		// Mutlitply a Vector by a scalar
-		template<typename Vec3T1, typename S,
-			typename = std::enable_if_t<IsVector3<Vec3T1> && std::is_arithmetic<S>::value>>
-		auto operator * (const Vec3T1& vec, S scale)
+		template<typename VecT1, typename VecT2>
+		std::enable_if_t<AllVector3<VecT1, VecT2>, bool>
+			operator!=(const VecT1& a, const VecT2& b)
 		{
-			return Make_Vector(vec.x * scale, vec.y * scale, vec.z * scale);
+			return !(a == b);
+		}
+
+		// Equality operators
+//		bool operator==(const Vec3T1& a, const Vec3T2& b)
+//		{
+//			return a.x == b.x && a.y == b.y && a.z == b.z;
+//		}
+
+		// Mutlitply a Vector by a scalar
+		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
+					typename S,
+					typename = std::enable_if_t<AllVector3<Vec3T1<T, Args1...>> &&
+												std::is_arithmetic_v<S>>
+			>
+		auto operator*(const Vec3T1<T, Args1...> &a, const S &s)
+			-> Vector3<decltype(a.x * s)>
+		{
+			return Make_Vector(a.x * s, a.y * s, a.z* s);
 		}
 
 		// Multiply two vectors of the same type componentwise
-		template<typename Vec3T1, typename Vec3T2,
-			typename = std::enable_if_t<IsVector3Like(Vec3T1) && IsVector3Like(Vec3T2)> >
-		auto operator * (const Vec3T1& a, const Vec3T2& b)
+		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
+					typename U, typename ... Args2, template<typename, typename...> class Vec3T2,
+					typename = std::enable_if_t<AllVector3<Vec3T1<T, Args1...>, Vec3T2<U, Args2...>>>
+		>
+		auto operator*(const Vec3T1<T, Args1...> &a, const Vec3T2<U, Args2...> &b)
+			-> Vector3<decltype(a.x*b.x)>
 		{
-			return Make_Vector(a.x * b.x, a.y * b.y, a.z * b.z);
+			return Make_Vector(a.x * b.x, a.y * b.y, a.z*b.z);
 		}
 
-		// Divide a 3 component Vector by a scalar
-		template<typename Vec3T, typename S,
-			typename = std::enable_if_t<IsVector3<Vec3T> && std::is_arithmetic<S>::value>>
-		auto operator / (const Vec3T& vec, S scale)
+//		// Divide a 3 component Vector by a scalar
+//		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
+//					typename S,
+//					typename = std::enable_if_t<IsVec3V<Vec3T1<T, Args1...>> &&
+//												std::is_arithmetic_v<S>>
+//			>
+//		auto operator/(const Vec3T1<T, Args1...> &a, const S &s)
+//			-> Vector3<decltype(std::declval<T>() / std::declval<S>(s))>
+//		{
+//			return Make_Vector(a.x / s, a.y / s, a.z / s);
+//		}
+//
+		template<	typename Vec2T,
+					typename S,
+					typename = std::enable_if_t<IsVec3V<Vec2T> &&
+												std::is_arithmetic_v<S>>
+			>
+			auto operator/(const Vec2T &a, S s)
+			-> Vector3<decltype(std::declval<typename Vec2T::ValueType>() / std::declval<S>())>
 		{
-			return Make_Vector(vec.x / scale, vec.y / scale, vec.z / scale);
+//|#pragma message("got here v3")
+			return Make_Vector(a.x / s, a.y / s, a.z / s);
 		}
+
 
 		// Divide two 3 component vectors componentwise
-		template<typename Vec3T1, typename Vec3T2,
-			typename = std::enable_if_t<IsVector3Like(Vec3T1) && IsVector3Like(Vec3T2)> >
-		auto operator / (const Vec3T1& a, const Vec3T2& b)
+		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
+					typename U, typename ... Args2, template<typename, typename...> class Vec3T2,
+					typename = std::enable_if_t<AllVector3<Vec3T1<T, Args1...>, Vec3T2<U, Args2...>>>
+		>
+		auto operator/(const Vec3T1<T, Args1...> &a, const Vec3T2<U, Args2...> &b)
+			-> Vector3<decltype(a.x / b.x)>
 		{
 			return Make_Vector(a.x / b.x, a.y / b.y, a.z / b.z);
 		}
@@ -255,9 +268,12 @@ namespace Pandora
 		}
 
 		// Return the dot product of two 3 component vectors
-		template<typename Vec3T1, typename Vec3T2,
-			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T1>>>
-		auto Dot(const Vec3T1& a, const Vec3T2& b)
+		template<	typename Vec3T1,
+					typename U, typename ... Args2, template<typename, typename...> class Vec3T2,
+					typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2<U, Args2...>>>
+		>
+		auto Dot(const Vec3T1 &a, const Vec3T2<U, Args2...> &b)
+			-> decltype(a.x*b.x)
 		{
 			return a.x*b.x + a.y*b.y + a.z*b.z;
 		}
@@ -273,54 +289,30 @@ namespace Pandora
 				);
 		}
 
-		// Return the square length of a vector3
-		template<typename Vec3T,
-			typename = std::enable_if_t<AllVector3<Vec3T>>>
-		auto Length2(const Vec3T &a)
+		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
+					typename U, typename ... Args2, template<typename, typename...> class Vec3T2,
+					typename = std::enable_if_t<AllVector3<Vec3T1<T, Args1...>, Vec3T2<U, Args2...>>>
+		>
+		auto Min(const Vec3T1<T, Args1...> &a, const Vec3T2<U, Args2...> &b)
+			->Vector3<RemoveCVRefT<T>>
 		{
-			return Dot(a, a);
-		}
-
-		// Return the length of a vector3
-		template<typename Vec3T,
-			typename = std::enable_if_t<AllVector3<Vec3T>>>
-		auto Length(const Vec3T &a)
-		{
-			return sqrt(Length2(a));
-		}
-
-		// Alias the length function to return magnitude
-		template<typename Vec3T, 
-			typename = std::enable_if_t<AllVector3<Vec3T>>>
-		inline auto Magnitude(const Vec3T& a)
-		{
-			return Length(a);
-		}
-
-		// Normaliza a vector3
-		template<typename Vec3T,
-			typename = std::enable_if_t<AllVector3<Vec3T>>>
-		auto Normalize(const Vec3T& a)
-		{
-			return a / Length(a);
-		}
-
-		// Compute the componentwise minimum of two vector3
-		template<typename Vec3T1, typename Vec3T2,
-			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2>>>
-		auto Min(const Vec3T1 &a, const Vec3T2 &b)
-		{
+			static_assert(std::is_same_v<T, U>, "Cannot find minimum between Vector3 with different value types. Return type is ambiguous.");
 			return Make_Vector(
 				std::min(a.x, b.x),
 				std::min(a.y, b.y),
 				std::min(a.z, b.z));
 		}
 
-		// Compute the componentwise maximum of two vector4
-		template<typename Vec3T1, typename Vec3T2,
-			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2>>>
-		auto Max(const Vec3T1 &a, const Vec3T2 &b)
+		// Compute the componentwise maximum of two vector3
+		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
+					typename U, typename ... Args2, template<typename, typename...> class Vec3T2,
+					typename = std::enable_if_t<AllVector3<Vec3T1<T, Args1...>, Vec3T2<U, Args2...>>>
+		>
+		auto Max(const Vec3T1<T, Args1...> &a, const Vec3T2<U, Args2...> &b)
+			->Vector3<RemoveCVRefT<T>>
 		{
+			static_assert(std::is_same_v<T, U>, "Cannot find maximum between Vector3 with different value types. Return type is ambiguous.");
+
 			return Make_Vector(
 				std::max(a.x, b.x),
 				std::max(a.y, b.y),
@@ -328,12 +320,19 @@ namespace Pandora
 		}
 
 		// Returns the compoenent wise clamped values between min and max.
-		template<typename Vec3T1, typename Vec3T2, typename Vec3T3,
-			typename = std::enable_if_t<AllVector3<Vec3T1, Vec3T2, Vec3T3>>>
-		auto Clamp(const Vec3T1 &value, const Vec3T2 &min, const Vec3T3 &max)
+		template<	typename T, typename ... Args1, template<typename, typename...> class Vec3T1,
+					typename U, typename ... Args2, template<typename, typename...> class Vec3T2,
+					typename V, typename ... Args3, template<typename, typename...> class Vec3T3,
+					typename = std::enable_if_t<AllVector3<Vec3T1<T, Args1...>, Vec3T2<U, Args2...>, Vec3T3<V, Args3...>>>
+		>
+		auto Clamp(const Vec3T1<T, Args1...> &val, const Vec3T2<U, Args2...> &min, const Vec3T3<V, Args3...> &max)
+			->Vector3<RemoveCVRefT<T>>
 		{
-			return Min(max, Max(min, value));
-		}
 
+			static_assert(std::is_same_v<T, U> && std::is_same_v<T, V>,
+				"Cannot clamp between Vector3 with different value types. Return type is ambiguous.");
+
+			return Min(max, Max(min, val));
+		}
 	}
 }

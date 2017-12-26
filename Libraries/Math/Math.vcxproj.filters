@@ -46,23 +46,32 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DefineSwizzle2.inl">
+    <None Include="DefineSwizzleTypes.inl">
       <Filter>Header Files\Swizzle</Filter>
     </None>
-    <None Include="DeclareSwizzle2.inl">
+    <None Include="DeclareSwizzlesZ.inl">
       <Filter>Header Files\Swizzle</Filter>
     </None>
-    <None Include="DefineSwizzle3.inl">
+    <None Include="DeclareSwizzlesW.inl">
       <Filter>Header Files\Swizzle</Filter>
     </None>
-    <None Include="DeclareSwizzle3.inl">
+    <None Include="DeclareSwizzlesX.inl">
       <Filter>Header Files\Swizzle</Filter>
     </None>
-    <None Include="DefineSwizzle2withZ.inl">
+    <None Include="DeclareSwizzlesY.inl">
       <Filter>Header Files\Swizzle</Filter>
     </None>
-    <None Include="DeclareSwizzle2WithZ.inl">
-      <Filter>Header Files</Filter>
+    <None Include="DefineSwizzlesX.inl">
+      <Filter>Header Files\Swizzle</Filter>
+    </None>
+    <None Include="DefineSwizzlesY.inl">
+      <Filter>Header Files\Swizzle</Filter>
+    </None>
+    <None Include="DefineSwizzlesZ.inl">
+      <Filter>Header Files\Swizzle</Filter>
+    </None>
+    <None Include="DefineSwizzlesW.inl">
+      <Filter>Header Files\Swizzle</Filter>
     </None>
   </ItemGroup>
 </Project>

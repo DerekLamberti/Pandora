@@ -139,6 +139,7 @@
     <ClInclude Include="half.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="NumericCast.h" />
+    <ClInclude Include="TypeHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base.cpp" />
