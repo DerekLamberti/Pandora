@@ -37,19 +37,6 @@ namespace Pandora
 		using Vec4h = Vector4<float16>;
 		using Vec4i = Vector4<int32>;
 
-		
-		// Create a Vector of a particular type
-		template<typename T>
-		Vector3<T> Make_Vector(T x, T y, T z);
-
-		template<typename T>
-		Vector4<T> Make_Vector(T x, T y, T z, T w);
-
-		template<typename T>
-		Vector4<T> Make_Vector(const Vector3<T> &i, T w);
-
-
-
 		template<typename T, typename U, typename ... Args, template<typename, typename...> class VecT>
 		auto vector_cast(const VecT<U, Args...> &other)
 		{
